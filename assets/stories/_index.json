@@ -1,0 +1,788 @@
+[
+  {
+    "id": "adam",
+    "file": "adam.json",
+    "title_ar": "آدم عليه السلام",
+    "title_en": "Adam (Peace be upon him)",
+    "category": "prophets",
+    "icon_key": "user",
+    "summary_ar": "قصة أبو البشر، من بداية خلقه من طين، وتعليمه الأسماء، وسجود الملائكة له، ومكيدة إبليس، وحتى هبوطه إلى الأرض وبدء مسيرة البشرية.",
+    "summary_en": "The story of the father of humanity, from his creation from clay, teaching him the names, the prostration of angels, the deception of Iblis, to his descent to earth.",
+    "chapter_count": 10,
+    "total_verses": 10,
+    "estimated_reading_minutes": 20,
+    "main_surahs_ar": [
+      "البقرة",
+      "الأعراف",
+      "طه",
+      "ص"
+    ],
+    "main_surahs_numbers": [
+      2,
+      7,
+      20,
+      38
+    ],
+    "order": 1
+  },
+  {
+    "id": "ashab-alfil",
+    "file": "ashab-alfil.json",
+    "title_ar": "أصحاب الفيل",
+    "title_en": "Companions of the Elephant",
+    "category": "quranic",
+    "icon_key": "shield-alert",
+    "summary_ar": "قصة أبرهة الحبشي الذي حاول هدم الكعبة بجيش من الفيلة، وكيف حماها الله بطير أبابيل ترميهم بحجارة من سجيل.",
+    "summary_en": "The story of Abraha the Abyssinian who tried to destroy the Kaaba with an army of elephants, and how God protected it with flocks of birds striking them with stones of baked clay.",
+    "chapter_count": 7,
+    "total_verses": 2,
+    "estimated_reading_minutes": 20,
+    "main_surahs_ar": [
+      "الفيل"
+    ],
+    "main_surahs_numbers": [
+      105
+    ],
+    "order": 2
+  },
+  {
+    "id": "ashab-aljannah",
+    "file": "ashab-aljannah.json",
+    "title_ar": "أصحاب الجنة",
+    "title_en": "Companions of the Garden",
+    "category": "quranic",
+    "icon_key": "leaf",
+    "summary_ar": "قصة أبناء الشيخ الصالح الذين بخلوا بحق الفقراء في بستانهم، فدبروا قطف الثمار ليلاً، فعاقبهم الله باحتراق البستان.",
+    "summary_en": "The story of the righteous old man's sons who withheld the poor's right from their orchard, plotting to harvest at night, so God punished them by burning the orchard.",
+    "chapter_count": 7,
+    "total_verses": 5,
+    "estimated_reading_minutes": 20,
+    "main_surahs_ar": [
+      "القلم"
+    ],
+    "main_surahs_numbers": [
+      68
+    ],
+    "order": 3
+  },
+  {
+    "id": "ashab-alkahf",
+    "file": "ashab-alkahf.json",
+    "title_ar": "أصحاب الكهف",
+    "title_en": "Companions of the Cave",
+    "category": "quranic",
+    "icon_key": "moon",
+    "summary_ar": "قصة فتية آمنوا بربهم فزادهم هدى، فروا بدينهم من ملك ظالم، فأنامهم الله في الكهف ثلاثمائة وتسع سنين ليكونوا آية للناس.",
+    "summary_en": "The story of youths who believed in their Lord, fled with their religion from an oppressive king, and God put them to sleep in the cave for 309 years as a sign for people.",
+    "chapter_count": 9,
+    "total_verses": 9,
+    "estimated_reading_minutes": 25,
+    "main_surahs_ar": [
+      "الكهف"
+    ],
+    "main_surahs_numbers": [
+      18
+    ],
+    "order": 4
+  },
+  {
+    "id": "ashab-alukhdud",
+    "file": "ashab-alukhdud.json",
+    "title_ar": "أصحاب الأخدود",
+    "title_en": "People of the Ditch",
+    "category": "quranic",
+    "icon_key": "flame",
+    "summary_ar": "قصة الغلام المؤمن الذي تحدى الملك الظالم، وتضحية المؤمنين بأنفسهم في خنادق النار ثباتاً على عقيدتهم.",
+    "summary_en": "The story of the believing boy who challenged the oppressive king, and the believers sacrificing themselves in trenches of fire to remain steadfast in their faith.",
+    "chapter_count": 9,
+    "total_verses": 4,
+    "estimated_reading_minutes": 25,
+    "main_surahs_ar": [
+      "البروج"
+    ],
+    "main_surahs_numbers": [
+      85
+    ],
+    "order": 5
+  },
+  {
+    "id": "ashab-assabt",
+    "file": "ashab-assabt.json",
+    "title_ar": "أصحاب السبت",
+    "title_en": "Companions of the Sabbath",
+    "category": "quranic",
+    "icon_key": "fish",
+    "summary_ar": "قصة قرية ساحلية من بني إسرائيل ابتلاهم الله بحرمة الصيد يوم السبت، فاحتالوا على أمر الله، فمسخهم قردة خاسئين.",
+    "summary_en": "The story of a coastal village of the Israelites whom God tested by forbidding fishing on the Sabbath. They tricked God's command, so He transformed them into despised monkeys.",
+    "chapter_count": 7,
+    "total_verses": 5,
+    "estimated_reading_minutes": 20,
+    "main_surahs_ar": [
+      "الأعراف",
+      "البقرة"
+    ],
+    "main_surahs_numbers": [
+      7,
+      2
+    ],
+    "order": 6
+  },
+  {
+    "id": "balaam",
+    "file": "balaam.json",
+    "title_ar": "بلعام بن باعوراء",
+    "title_en": "Balaam son of Beor",
+    "category": "quranic",
+    "icon_key": "book-x",
+    "summary_ar": "قصة العالم الذي آتاه الله آياته واسم الله الأعظم، فانسلخ منها واتبع هواه وأخلد إلى الأرض، فضرب الله له مثل الكلب اللاهث.",
+    "summary_en": "The story of the scholar whom God gave His signs and His greatest name, but he detached himself from them, followed his desires, and clung to the earth, so God likened him to a panting dog.",
+    "chapter_count": 5,
+    "total_verses": 5,
+    "estimated_reading_minutes": 20,
+    "main_surahs_ar": [
+      "الأعراف"
+    ],
+    "main_surahs_numbers": [
+      7
+    ],
+    "order": 7
+  },
+  {
+    "id": "baqarah",
+    "file": "baqarah.json",
+    "title_ar": "قصة البقرة",
+    "title_en": "Story of the Cow",
+    "category": "quranic",
+    "icon_key": "beef",
+    "summary_ar": "جريمة قتل غامضة في بني إسرائيل، وأمر إلهي بذبح بقرة لكشف القاتل، وتعنت القوم في السؤال حتى شدد الله عليهم.",
+    "summary_en": "A mysterious murder among the Israelites, a divine command to slaughter a cow to reveal the killer, and the people's stubbornness in questioning until God made it difficult for them.",
+    "chapter_count": 8,
+    "total_verses": 8,
+    "estimated_reading_minutes": 25,
+    "main_surahs_ar": [
+      "البقرة"
+    ],
+    "main_surahs_numbers": [
+      2
+    ],
+    "order": 8
+  },
+  {
+    "id": "dawud-sulayman",
+    "file": "dawud-sulayman.json",
+    "title_ar": "داود وسليمان عليهما السلام",
+    "title_en": "David and Solomon (Peace be upon them)",
+    "category": "prophets",
+    "icon_key": "crown",
+    "summary_ar": "قصة الملك والنبوة، من شجاعة داود وقتله لجالوت وإلانة الحديد له، إلى ملك سليمان العظيم وتسخير الجن والطير والريح له.",
+    "summary_en": "The story of kingship and prophethood, from David's courage killing Goliath and softening iron, to Solomon's great kingdom and subjugation of Jinn, birds, and wind.",
+    "chapter_count": 11,
+    "total_verses": 11,
+    "estimated_reading_minutes": 30,
+    "main_surahs_ar": [
+      "البقرة",
+      "ص",
+      "الأنبياء",
+      "سبأ",
+      "النمل"
+    ],
+    "main_surahs_numbers": [
+      2,
+      38,
+      21,
+      34,
+      27
+    ],
+    "order": 9
+  },
+  {
+    "id": "dhul-qarnayn",
+    "file": "dhul-qarnayn.json",
+    "title_ar": "ذو القرنين",
+    "title_en": "Dhul-Qarnayn",
+    "category": "quranic",
+    "icon_key": "globe",
+    "summary_ar": "قصة الملك العادل الذي طاف الأرض شرقاً وغرباً، ونشر العدل، وبنى السد العظيم ليحمي الناس من يأجوج ومأجوج.",
+    "summary_en": "The story of the just king who traveled the earth east and west, spread justice, and built the great barrier to protect people from Gog and Magog.",
+    "chapter_count": 8,
+    "total_verses": 8,
+    "estimated_reading_minutes": 25,
+    "main_surahs_ar": [
+      "الكهف"
+    ],
+    "main_surahs_numbers": [
+      18
+    ],
+    "order": 10
+  },
+  {
+    "id": "harut-marut",
+    "file": "harut-marut.json",
+    "title_ar": "هاروت وماروت",
+    "title_en": "Harut and Marut",
+    "category": "quranic",
+    "icon_key": "sparkles",
+    "summary_ar": "قصة الملكين اللذين أُنزلا ببابل فتنة واختباراً للناس، يعلمانهم السحر بعد تحذيرهم، وكيف افترى اليهود على سليمان.",
+    "summary_en": "The story of the two angels sent down in Babylon as a trial for people, teaching them magic after warning them, and how the Jews falsely accused Solomon.",
+    "chapter_count": 6,
+    "total_verses": 6,
+    "estimated_reading_minutes": 20,
+    "main_surahs_ar": [
+      "البقرة"
+    ],
+    "main_surahs_numbers": [
+      2
+    ],
+    "order": 11
+  },
+  {
+    "id": "hud-salih",
+    "file": "hud-salih.json",
+    "title_ar": "هود وصالح عليهما السلام",
+    "title_en": "Hud and Salih (Peace be upon them)",
+    "category": "prophets",
+    "icon_key": "wind",
+    "summary_ar": "قصة نبيي العرب هود وصالح، وهلاك قوم عاد بالريح الصرصر العاتية، وقوم ثمود بالصيحة بعد عقرهم للناقة المعجزة.",
+    "summary_en": "The story of the Arab prophets Hud and Salih, the destruction of 'Ad by the fierce wind, and Thamud by the blast after they hamstrung the miraculous she-camel.",
+    "chapter_count": 9,
+    "total_verses": 9,
+    "estimated_reading_minutes": 25,
+    "main_surahs_ar": [
+      "هود",
+      "الأعراف",
+      "الشعراء",
+      "الحاقة",
+      "الشمس"
+    ],
+    "main_surahs_numbers": [
+      11,
+      7,
+      26,
+      69,
+      91
+    ],
+    "order": 12
+  },
+  {
+    "id": "ibrahim",
+    "file": "ibrahim.json",
+    "title_ar": "إبراهيم عليه السلام",
+    "title_en": "Abraham (Peace be upon him)",
+    "category": "prophets",
+    "icon_key": "star",
+    "summary_ar": "قصة خليل الرحمن وأبو الأنبياء، من محاججة قومه وتحطيم الأصنام، إلى النجاة من النار، وبناء الكعبة، وابتلاء ذبح ابنه.",
+    "summary_en": "The story of the Friend of the Merciful and the Father of Prophets, from arguing with his people and smashing idols, to surviving the fire, building the Kaaba, and the trial of sacrificing his son.",
+    "chapter_count": 11,
+    "total_verses": 11,
+    "estimated_reading_minutes": 25,
+    "main_surahs_ar": [
+      "الأنعام",
+      "مريم",
+      "الأنبياء",
+      "الشعراء",
+      "الصافات"
+    ],
+    "main_surahs_numbers": [
+      6,
+      19,
+      21,
+      26,
+      37
+    ],
+    "order": 13
+  },
+  {
+    "id": "isa",
+    "file": "isa.json",
+    "title_ar": "عيسى عليه السلام",
+    "title_en": "Jesus (Peace be upon him)",
+    "category": "prophets",
+    "icon_key": "cross",
+    "summary_ar": "كلمة الله وروح منه، قصة الميلاد المعجز من العذراء مريم، ومعجزاته الباهرة، ورفعه إلى السماء، وعودته في آخر الزمان.",
+    "summary_en": "The Word of God and a spirit from Him, the story of the miraculous birth from the Virgin Mary, his dazzling miracles, his ascension to heaven, and his return at the end of times.",
+    "chapter_count": 9,
+    "total_verses": 9,
+    "estimated_reading_minutes": 25,
+    "main_surahs_ar": [
+      "آل عمران",
+      "مريم",
+      "المائدة",
+      "النساء"
+    ],
+    "main_surahs_numbers": [
+      3,
+      19,
+      5,
+      4
+    ],
+    "order": 14
+  },
+  {
+    "id": "ismail",
+    "file": "ismail.json",
+    "title_ar": "إسماعيل وإسحاق",
+    "title_en": "Ismail and Ishaq",
+    "category": "prophets",
+    "icon_key": "users",
+    "summary_ar": "قصة ابني إبراهيم عليهما السلام؛ إسماعيل الذبيح الذي بنى الكعبة مع أبيه، وإسحاق الذي بُشر به إبراهيم ليكون نبياً ومن نسله أنبياء بني إسرائيل.",
+    "summary_en": "The story of Ibrahim's two sons; Ismail the sacrificed who built the Kaaba with his father, and Ishaq whose birth was foretold to be a prophet and the ancestor of the Israelite prophets.",
+    "chapter_count": 8,
+    "total_verses": 7,
+    "estimated_reading_minutes": 20,
+    "main_surahs_ar": [
+      "البقرة",
+      "الصافات",
+      "إبراهيم"
+    ],
+    "main_surahs_numbers": [
+      2,
+      37,
+      14
+    ],
+    "order": 15
+  },
+  {
+    "id": "luqman",
+    "file": "luqman.json",
+    "title_ar": "لقمان الحكيم",
+    "title_en": "Luqman the Wise",
+    "category": "quranic",
+    "icon_key": "book-open",
+    "summary_ar": "قصة العبد الصالح الذي آتاه الله الحكمة، ووصاياه الخالدة لابنه التي تمثل منهجاً متكاملاً في العقيدة والأخلاق والسلوك.",
+    "summary_en": "The story of the righteous servant whom God granted wisdom, and his immortal advice to his son, representing a complete methodology in faith, morals, and behavior.",
+    "chapter_count": 8,
+    "total_verses": 8,
+    "estimated_reading_minutes": 20,
+    "main_surahs_ar": [
+      "لقمان"
+    ],
+    "main_surahs_numbers": [
+      31
+    ],
+    "order": 16
+  },
+  {
+    "id": "lut",
+    "file": "lut.json",
+    "title_ar": "لوط",
+    "title_en": "Lut (Lot)",
+    "category": "prophets",
+    "icon_key": "alert-triangle",
+    "summary_ar": "قصة نبي الله لوط الذي بُعث إلى قوم سدوم ليدعوهم إلى التوحيد وترك الفاحشة التي لم يسبقهم بها أحد، وكيف أهلكهم الله.",
+    "summary_en": "The story of Prophet Lut, sent to the people of Sodom to call them to monotheism and to abandon the unprecedented immorality, and how God destroyed them.",
+    "chapter_count": 8,
+    "total_verses": 8,
+    "estimated_reading_minutes": 20,
+    "main_surahs_ar": [
+      "هود",
+      "الحجر",
+      "الشعراء"
+    ],
+    "main_surahs_numbers": [
+      11,
+      15,
+      26
+    ],
+    "order": 17
+  },
+  {
+    "id": "muhammad",
+    "file": "muhammad.json",
+    "title_ar": "محمد ﷺ",
+    "title_en": "Muhammad (PBUH)",
+    "category": "prophets",
+    "icon_key": "moon",
+    "summary_ar": "خاتم الأنبياء والمرسلين، قصة اليتيم الذي أضاء العالم، من غار حراء إلى بناء الدولة في المدينة، وفتح مكة، وإتمام الدين.",
+    "summary_en": "The Seal of the Prophets, the story of the orphan who illuminated the world, from Cave Hira to building the state in Medina, the conquest of Mecca, and the completion of the religion.",
+    "chapter_count": 11,
+    "total_verses": 11,
+    "estimated_reading_minutes": 40,
+    "main_surahs_ar": [
+      "العلق",
+      "المدثر",
+      "الأنفال",
+      "الفتح",
+      "التوبة"
+    ],
+    "main_surahs_numbers": [
+      96,
+      74,
+      8,
+      48,
+      9
+    ],
+    "order": 18
+  },
+  {
+    "id": "mujadilah",
+    "file": "mujadilah.json",
+    "title_ar": "المجادلة",
+    "title_en": "The Pleading Woman",
+    "category": "quranic",
+    "icon_key": "message-circle",
+    "summary_ar": "قصة خولة بنت ثعلبة التي ظاهر منها زوجها، فجاءت تشتكي إلى النبي وتجادل، فسمع الله شكواها من فوق سبع سماوات وأنزل حكماً يرحمها.",
+    "summary_en": "The story of Khawlah bint Tha'labah whose husband declared her unlawful to him (Zihar). She came complaining and pleading to the Prophet, so God heard her complaint from above seven heavens and revealed a merciful ruling.",
+    "chapter_count": 6,
+    "total_verses": 3,
+    "estimated_reading_minutes": 20,
+    "main_surahs_ar": [
+      "المجادلة"
+    ],
+    "main_surahs_numbers": [
+      58
+    ],
+    "order": 19
+  },
+  {
+    "id": "mumin-alfirawn",
+    "file": "mumin-alfirawn.json",
+    "title_ar": "مؤمن آل فرعون",
+    "title_en": "The Believer of Pharaoh's People",
+    "category": "quranic",
+    "icon_key": "shield",
+    "summary_ar": "قصة الرجل الشجاع من حاشية فرعون الذي كتم إيمانه، ثم جهر بالحق ليدافع عن موسى ويحذر قومه من عذاب الله.",
+    "summary_en": "The story of the courageous man from Pharaoh's inner circle who concealed his faith, then publicly spoke the truth to defend Moses and warn his people of God's punishment.",
+    "chapter_count": 8,
+    "total_verses": 8,
+    "estimated_reading_minutes": 25,
+    "main_surahs_ar": [
+      "غافر"
+    ],
+    "main_surahs_numbers": [
+      40
+    ],
+    "order": 20
+  },
+  {
+    "id": "mumin-yasin",
+    "file": "mumin-yasin.json",
+    "title_ar": "مؤمن آل ياسين",
+    "title_en": "Believer of Yasin",
+    "category": "quranic",
+    "icon_key": "user-check",
+    "summary_ar": "قصة حبيب النجار الذي جاء من أقصى المدينة يسعى لينصر المرسلين، فقتله قومه، فأدخله الله الجنة وخلد ذكره.",
+    "summary_en": "The story of Habib Al-Najjar who came rushing from the farthest part of the city to support the messengers. His people killed him, so God admitted him to Paradise and immortalized his memory.",
+    "chapter_count": 7,
+    "total_verses": 7,
+    "estimated_reading_minutes": 20,
+    "main_surahs_ar": [
+      "يس"
+    ],
+    "main_surahs_numbers": [
+      36
+    ],
+    "order": 21
+  },
+  {
+    "id": "musa-khidr",
+    "file": "musa-khidr.json",
+    "title_ar": "موسى والخضر",
+    "title_en": "Musa and Al-Khidr",
+    "category": "quranic",
+    "icon_key": "map",
+    "summary_ar": "رحلة نبي الله موسى للبحث عن العبد الصالح الخضر ليتعلم منه الحكمة، وقصة الأحداث العجيبة التي تكشف عن تدبير الله الخفي.",
+    "summary_en": "The journey of Prophet Moses to find the righteous servant Al-Khidr to learn wisdom, and the story of the wondrous events revealing God's hidden planning.",
+    "chapter_count": 9,
+    "total_verses": 9,
+    "estimated_reading_minutes": 25,
+    "main_surahs_ar": [
+      "الكهف"
+    ],
+    "main_surahs_numbers": [
+      18
+    ],
+    "order": 22
+  },
+  {
+    "id": "musa",
+    "file": "musa.json",
+    "title_ar": "موسى عليه السلام",
+    "title_en": "Moses (Peace be upon him)",
+    "category": "prophets",
+    "icon_key": "waves",
+    "summary_ar": "كليم الله، قصة المواجهة العظمى بين الحق المتمثل في موسى والباطل المتمثل في فرعون، ورحلة بني إسرائيل في التيه.",
+    "summary_en": "The one who spoke to God, the story of the great confrontation between truth represented by Moses and falsehood represented by Pharaoh, and the journey of the Israelites in the wilderness.",
+    "chapter_count": 11,
+    "total_verses": 11,
+    "estimated_reading_minutes": 30,
+    "main_surahs_ar": [
+      "القصص",
+      "طه",
+      "الأعراف",
+      "الشعراء"
+    ],
+    "main_surahs_numbers": [
+      28,
+      20,
+      7,
+      26
+    ],
+    "order": 23
+  },
+  {
+    "id": "noah",
+    "file": "noah.json",
+    "title_ar": "نوح عليه السلام",
+    "title_en": "Noah (Peace be upon him)",
+    "category": "prophets",
+    "icon_key": "ship",
+    "summary_ar": "قصة شيخ المرسلين، وصبره العظيم في دعوة قومه 950 عاماً، وصناعة الفلك، والطوفان العظيم الذي طهر الأرض من الشرك.",
+    "summary_en": "The story of the elder of the messengers, his immense patience in calling his people for 950 years, the building of the ark, and the great flood.",
+    "chapter_count": 9,
+    "total_verses": 9,
+    "estimated_reading_minutes": 25,
+    "main_surahs_ar": [
+      "نوح",
+      "هود",
+      "الأعراف",
+      "الشعراء"
+    ],
+    "main_surahs_numbers": [
+      71,
+      11,
+      7,
+      26
+    ],
+    "order": 24
+  },
+  {
+    "id": "other-prophets",
+    "file": "other-prophets.json",
+    "title_ar": "أنبياء آخرون",
+    "title_en": "Other Prophets",
+    "category": "prophets",
+    "icon_key": "users",
+    "summary_ar": "قصص موجزة لأنبياء كرام ذكرهم القرآن وأثنى عليهم: إدريس، إلياس، اليسع، وذو الكفل عليهم السلام.",
+    "summary_en": "Brief stories of noble prophets mentioned and praised in the Quran: Idris, Ilyas, Alyasa, and Dhul-Kifl.",
+    "chapter_count": 7,
+    "total_verses": 6,
+    "estimated_reading_minutes": 15,
+    "main_surahs_ar": [
+      "مريم",
+      "الأنبياء",
+      "الصافات",
+      "ص"
+    ],
+    "main_surahs_numbers": [
+      19,
+      21,
+      37,
+      38
+    ],
+    "order": 25
+  },
+  {
+    "id": "qabil-habil",
+    "file": "qabil-habil.json",
+    "title_ar": "قابيل وهابيل",
+    "title_en": "Cain and Abel",
+    "category": "quranic",
+    "icon_key": "users",
+    "summary_ar": "قصة أول جريمة قتل في تاريخ البشرية، حيث قتل قابيل أخاه هابيل بدافع الحسد بعد أن تقبل الله قربان هابيل ولم يتقبل قربانه.",
+    "summary_en": "The story of the first murder in human history, where Cain killed his brother Abel out of envy after God accepted Abel's offering and rejected his.",
+    "chapter_count": 6,
+    "total_verses": 6,
+    "estimated_reading_minutes": 20,
+    "main_surahs_ar": [
+      "المائدة"
+    ],
+    "main_surahs_numbers": [
+      5
+    ],
+    "order": 26
+  },
+  {
+    "id": "qarun",
+    "file": "qarun.json",
+    "title_ar": "قارون",
+    "title_en": "Qarun (Korah)",
+    "category": "quranic",
+    "icon_key": "coins",
+    "summary_ar": "قصة الثراء الفاحش والغرور، وكيف خسف الله الأرض بقارون وبكنوزه بعد أن تكبر ونسب الفضل لنفسه.",
+    "summary_en": "The story of immense wealth and arrogance, and how God caused the earth to swallow Qarun and his treasures after he became proud and attributed the grace to himself.",
+    "chapter_count": 7,
+    "total_verses": 7,
+    "estimated_reading_minutes": 20,
+    "main_surahs_ar": [
+      "القصص"
+    ],
+    "main_surahs_numbers": [
+      28
+    ],
+    "order": 27
+  },
+  {
+    "id": "saba",
+    "file": "saba.json",
+    "title_ar": "سبأ",
+    "title_en": "Saba (Sheba)",
+    "category": "quranic",
+    "icon_key": "map-pin",
+    "summary_ar": "قصة مملكة سبأ التي أنعم الله عليها بجنتين عظيمتين، فكفروا بالنعمة وطلبوا المشقة، فعاقبهم الله بسيل العرم وشتت شملهم.",
+    "summary_en": "The story of the Kingdom of Sheba, blessed by God with two great gardens. They were ungrateful and asked for hardship, so God punished them with the flood of Arim and scattered them.",
+    "chapter_count": 6,
+    "total_verses": 6,
+    "estimated_reading_minutes": 20,
+    "main_surahs_ar": [
+      "سبأ"
+    ],
+    "main_surahs_numbers": [
+      34
+    ],
+    "order": 28
+  },
+  {
+    "id": "sahib-aljannatayn",
+    "file": "sahib-aljannatayn.json",
+    "title_ar": "صاحب الجنتين",
+    "title_en": "Owner of the Two Gardens",
+    "category": "quranic",
+    "icon_key": "tree-deciduous",
+    "summary_ar": "قصة حوار بين رجلين؛ غني مغرور بجنتيه كفر بالنعمة وأنكر البعث، وفقير مؤمن نصحه، وكيف دُمرت الجنتان عقاباً للغرور.",
+    "summary_en": "The story of a dialogue between two men; an arrogant rich man who denied the resurrection, and a poor believer who advised him, and how the gardens were destroyed as punishment.",
+    "chapter_count": 8,
+    "total_verses": 8,
+    "estimated_reading_minutes": 20,
+    "main_surahs_ar": [
+      "الكهف"
+    ],
+    "main_surahs_numbers": [
+      18
+    ],
+    "order": 29
+  },
+  {
+    "id": "shuayb",
+    "file": "shuayb.json",
+    "title_ar": "شعيب",
+    "title_en": "Shuayb (Jethro)",
+    "category": "prophets",
+    "icon_key": "scale",
+    "summary_ar": "قصة نبي الله شعيب خطيب الأنبياء الذي بُعث إلى قوم مدين ليدعوهم إلى التوحيد والعدل الاقتصادي وترك التطفيف في المكيال والميزان.",
+    "summary_en": "The story of Prophet Shuayb, the orator of the prophets, sent to the people of Madyan to call them to monotheism, economic justice, and to stop cheating in weights and measures.",
+    "chapter_count": 8,
+    "total_verses": 8,
+    "estimated_reading_minutes": 20,
+    "main_surahs_ar": [
+      "الأعراف",
+      "هود",
+      "الشعراء"
+    ],
+    "main_surahs_numbers": [
+      7,
+      11,
+      26
+    ],
+    "order": 30
+  },
+  {
+    "id": "uzair",
+    "file": "uzair.json",
+    "title_ar": "عزير",
+    "title_en": "Uzair (Ezra)",
+    "category": "quranic",
+    "icon_key": "book",
+    "summary_ar": "قصة الرجل الصالح الذي أماته الله مائة عام ثم أحياه، ليريه كيف يحيي الموتى، وكيف حفظ طعامه وأحيا حماره.",
+    "summary_en": "The story of the righteous man whom God caused to die for a hundred years then revived, to show him how He resurrects the dead, preserving his food and reviving his donkey.",
+    "chapter_count": 7,
+    "total_verses": 7,
+    "estimated_reading_minutes": 20,
+    "main_surahs_ar": [
+      "البقرة"
+    ],
+    "main_surahs_numbers": [
+      2
+    ],
+    "order": 31
+  },
+  {
+    "id": "yaqub",
+    "file": "yaqub.json",
+    "title_ar": "يعقوب",
+    "title_en": "Yaqub (Jacob)",
+    "category": "prophets",
+    "icon_key": "users",
+    "summary_ar": "قصة نبي الله يعقوب (إسرائيل) وصبره الجميل على فقدان أحب أبنائه يوسف، ويقينه التام برحمة الله حتى رد إليه بصره وأبناءه.",
+    "summary_en": "The story of Prophet Yaqub (Israel) and his beautiful patience over the loss of his beloved son Yusuf, and his absolute certainty in God's mercy until his sight and sons were returned to him.",
+    "chapter_count": 8,
+    "total_verses": 8,
+    "estimated_reading_minutes": 20,
+    "main_surahs_ar": [
+      "يوسف",
+      "البقرة"
+    ],
+    "main_surahs_numbers": [
+      12,
+      2
+    ],
+    "order": 32
+  },
+  {
+    "id": "yunus-ayyub",
+    "file": "yunus-ayyub.json",
+    "title_ar": "يونس وأيوب",
+    "title_en": "Yunus and Ayyub",
+    "category": "prophets",
+    "icon_key": "heart",
+    "summary_ar": "قصة نبي الله يونس الذي التقمه الحوت فنجاه الله بتسبيحه، وقصة نبي الله أيوب الذي ضرب أروع الأمثلة في الصبر على الابتلاء الشديد.",
+    "summary_en": "The story of Prophet Yunus who was swallowed by the whale and saved by his glorification, and Prophet Ayyub who set the greatest example of patience during severe trials.",
+    "chapter_count": 10,
+    "total_verses": 7,
+    "estimated_reading_minutes": 25,
+    "main_surahs_ar": [
+      "الأنبياء",
+      "الصافات",
+      "ص"
+    ],
+    "main_surahs_numbers": [
+      21,
+      37,
+      38
+    ],
+    "order": 33
+  },
+  {
+    "id": "yusuf",
+    "file": "yusuf.json",
+    "title_ar": "يوسف عليه السلام",
+    "title_en": "Joseph (Peace be upon him)",
+    "category": "prophets",
+    "icon_key": "sun",
+    "summary_ar": "أحسن القصص، رحلة من غيابات الجب إلى خزائن الأرض، قصة الصبر على الابتلاء، العفة، وتدبير الله الخفي.",
+    "summary_en": "The best of stories, a journey from the depths of the well to the treasuries of the earth, a story of patience through trials, chastity, and God's hidden planning.",
+    "chapter_count": 12,
+    "total_verses": 12,
+    "estimated_reading_minutes": 30,
+    "main_surahs_ar": [
+      "يوسف"
+    ],
+    "main_surahs_numbers": [
+      12
+    ],
+    "order": 34
+  },
+  {
+    "id": "zakariya-yahya",
+    "file": "zakariya-yahya.json",
+    "title_ar": "زكريا ويحيى",
+    "title_en": "Zakariya and Yahya",
+    "category": "prophets",
+    "icon_key": "user-plus",
+    "summary_ar": "قصة نبي الله زكريا وكفالته لمريم ودعائه الخفي بالولد، وقصة ابنه النبي يحيى الذي أوتي الحكم صبياً وكان باراً تقياً.",
+    "summary_en": "The story of Prophet Zakariya, his sponsorship of Maryam, his secret prayer for a child, and the story of his son Prophet Yahya who was given wisdom as a boy and was righteous and pious.",
+    "chapter_count": 7,
+    "total_verses": 6,
+    "estimated_reading_minutes": 20,
+    "main_surahs_ar": [
+      "مريم",
+      "آل عمران",
+      "الأنبياء"
+    ],
+    "main_surahs_numbers": [
+      19,
+      3,
+      21
+    ],
+    "order": 35
+  }
+]

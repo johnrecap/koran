@@ -1,0 +1,110 @@
+[
+  {
+    "id": "balaam",
+    "title_ar": "بلعام بن باعوراء",
+    "title_en": "Balaam son of Beor",
+    "category": "quranic",
+    "icon_key": "book-x",
+    "summary_ar": "قصة العالم الذي آتاه الله آياته واسم الله الأعظم، فانسلخ منها واتبع هواه وأخلد إلى الأرض، فضرب الله له مثل الكلب اللاهث.",
+    "summary_en": "The story of the scholar whom God gave His signs and His greatest name, but he detached himself from them, followed his desires, and clung to the earth, so God likened him to a panting dog.",
+    "estimated_reading_minutes": 20,
+    "main_surahs_ar": [
+      "الأعراف"
+    ],
+    "main_surahs_numbers": [
+      7
+    ],
+    "chapters": [
+      {
+        "id": "ch1",
+        "order": 1,
+        "title_ar": "العالم المستجاب الدعوة",
+        "title_en": "The Scholar Whose Prayers Were Answered",
+        "narrative_ar": "تذكر التفاسير أن الآيات في سورة الأعراف نزلت في رجل من بني إسرائيل (أو من الكنعانيين) يُدعى \"بلعام بن باعوراء\". كان هذا الرجل عالماً كبيراً، آتاه الله آياته، وقيل إنه كان يعرف \"اسم الله الأعظم\" الذي إذا دُعي به أجاب. كان مستجاب الدعوة، وله مكانة عظيمة بين قومه بسبب علمه وقربه من الله. كان يمثل قمة ما يمكن أن يصل إليه عالم في زمانه من المعرفة والفضل.",
+        "lesson_ar": "العلم الشرعي والمكانة الدينية هما نعمة عظيمة واختبار كبير، ولا يضمنان العصمة من الانحراف إذا غفل القلب.",
+        "lesson_en": "Religious knowledge and religious status are a great blessing and a major test, and they do not guarantee infallibility from deviation if the heart is heedless.",
+        "verses": [
+          {
+            "surah": 7,
+            "ayah_start": 175,
+            "ayah_end": 175,
+            "text_ar": "وَاتْلُ عَلَيْهِمْ نَبَأَ الَّذِي آتَيْنَاهُ آيَاتِنَا",
+            "context_ar": "الإشارة إلى الرجل الذي منحه الله العلم والآيات."
+          }
+        ]
+      },
+      {
+        "id": "ch2",
+        "order": 2,
+        "title_ar": "الانسلاخ من الآيات",
+        "title_en": "Detachment from the Signs",
+        "narrative_ar": "رغم هذا العلم العظيم، حدثت الانتكاسة. \"فانسلخ منها\"، أي خرج من هذا العلم وتخلى عن العمل به كما تنسلخ الحية من جلدها. لم يعد علمه يؤثر في قلبه أو سلوكه. أصبح العلم مجرد معلومات لا تنهاه عن منكر ولا تدفعه لطاعة. ولما تخلى عن حصانة العلم والإيمان، \"فأتبعه الشيطان\"، أي لحقه الشيطان واستحوذ عليه بسهولة، \"فكان من الغاوين\" (الضالين الهالكين).",
+        "lesson_ar": "العلم بلا عمل لا ينفع صاحبه، والانسلاخ من مبادئ الدين يجعل الإنسان فريسة سهلة للشيطان.",
+        "lesson_en": "Knowledge without action does not benefit its owner. Detaching from the principles of religion makes a person an easy prey for Satan.",
+        "verses": [
+          {
+            "surah": 7,
+            "ayah_start": 175,
+            "ayah_end": 175,
+            "text_ar": "فَانسَلَخَ مِنْهَا فَأَتْبَعَهُ الشَّيْطَانُ فَكَانَ مِنَ الْغَاوِينَ",
+            "context_ar": "تخلي العالم عن علمه واستحواذ الشيطان عليه."
+          }
+        ]
+      },
+      {
+        "id": "ch3",
+        "order": 3,
+        "title_ar": "الإخلاد إلى الأرض واتباع الهوى",
+        "title_en": "Clinging to the Earth and Following Desires",
+        "narrative_ar": "يبين القرآن سبب هذا السقوط المروع: \"ولو شئنا لرفعناه بها\"، أي لو أراد الله لرفعه بهذا العلم إلى درجات الصالحين، ولكنه هو الذي اختار السقوط. \"ولكنه أخلد إلى الأرض واتبع هواه\". ركن إلى الدنيا، وأحب المال والجاه، ومال إلى الشهوات الدنيوية الزائلة (قيل إن قومه أغروه بالمال والنساء ليدعو على موسى عليه السلام). فضل الطين على الروح، واتبع هواه بدلاً من اتباع هدى الله.",
+        "lesson_ar": "حب الدنيا (الإخلاد إلى الأرض) واتباع الهوى هما أصل كل انحراف، وهما اللذان يدمران عقل العالم وقلبه.",
+        "lesson_en": "Love of the world (clinging to the earth) and following desires are the root of every deviation, destroying the scholar's mind and heart.",
+        "verses": [
+          {
+            "surah": 7,
+            "ayah_start": 176,
+            "ayah_end": 176,
+            "text_ar": "وَلَوْ شِئْنَا لَرَفَعْنَاهُ بِهَا وَلَٰكِنَّهُ أَخْلَدَ إِلَى الْأَرْضِ وَاتَّبَعَ هَوَاهُ",
+            "context_ar": "بيان سبب سقوط العالم وهو ركونه للدنيا واتباع هواه."
+          }
+        ]
+      },
+      {
+        "id": "ch4",
+        "order": 4,
+        "title_ar": "المثل القرآني: الكلب اللاهث",
+        "title_en": "The Quranic Parable: The Panting Dog",
+        "narrative_ar": "ضرب الله لهذا العالم المنتكس مثلاً من أبشع الأمثال في القرآن: \"فمثله كمثل الكلب إن تحمل عليه يلهث أو تتركه يلهث\". الكلب يلهث (يخرج لسانه ويتنفس بسرعة) في كل الأحوال؛ سواء طردته وأخفته، أو تركته مرتاحاً. وكذلك هذا العالم الذي اتبع هواه؛ قلبه دائم القلق والاضطراب، يلهث وراء الدنيا لا يشبع منها أبداً، سواء وعظته وزجرته، أو تركته ولم تعظه، فهو مستمر في ضلاله ولهثه وراء شهواته.",
+        "lesson_ar": "العالم الذي يبيع دينه بدنياه يفقد كرامته، ويصبح عبداً لشهواته لا يشبع ولا يهدأ، كالكلب اللاهث دائماً.",
+        "lesson_en": "A scholar who sells his religion for the world loses his dignity and becomes a slave to his desires, never satisfied or calm, like a constantly panting dog.",
+        "verses": [
+          {
+            "surah": 7,
+            "ayah_start": 176,
+            "ayah_end": 176,
+            "text_ar": "فَمَثَلُهُ كَمَثَلِ الْكَلْبِ إِن تَحْمِلْ عَلَيْهِ يَلْهَثْ أَوْ تَتْرُكْهُ يَلْهَث ۚ ذَّٰلِكَ مَثَلُ الْقَوْمِ الَّذِينَ كَذَّبُوا بِآيَاتِنَا ۚ فَاقْصُصِ الْقَصَصَ لَعَلَّهُمْ يَتَفَكَّرُونَ",
+            "context_ar": "تشبيه العالم المنتكس بالكلب اللاهث في كل أحواله."
+          }
+        ]
+      },
+      {
+        "id": "ch5",
+        "order": 5,
+        "title_ar": "سوء الخاتمة والعبرة",
+        "title_en": "The Bad Ending and the Lesson",
+        "narrative_ar": "تذكر الروايات أن بلعام حاول الدعاء على موسى وقومه، فقلب الله دعاءه على قومه هو، واندلع لسانه حتى وقع على صدره، وسُلب منه الاسم الأعظم والإيمان، ومات على الكفر وسوء الخاتمة. يعقب القرآن على هذه القصة: \"ساء مثلاً القوم الذين كذبوا بآياتنا وأنفسهم كانوا يظلمون\". هذا المثل ليس لبلعام وحده، بل لكل من أوتي علماً أو آيات فكذب بها واتبع هواه، فهو يظلم نفسه ويعرضها لأسوأ مصير.",
+        "lesson_ar": "سوء الخاتمة هو أقسى عقوبة لمن يتلاعب بالدين، والقصص القرآني جاء لنتفكر فيه ونحذر من السقوط في نفس الفخ.",
+        "lesson_en": "A bad ending is the harshest punishment for those who manipulate religion. Quranic stories are meant for us to reflect upon and beware of falling into the same trap.",
+        "verses": [
+          {
+            "surah": 7,
+            "ayah_start": 177,
+            "ayah_end": 177,
+            "text_ar": "سَاءَ مَثَلًا الْقَوْمُ الَّذِينَ كَذَّبُوا بِآيَاتِنَا وَأَنفُسَهُمْ كَانُوا يَظْلِمُونَ",
+            "context_ar": "الخلاصة والعبرة من قصة بلعام والتحذير من ظلم النفس."
+          }
+        ]
+      }
+    ]
+  }
+]

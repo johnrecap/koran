@@ -1,0 +1,97 @@
+# ===========================
+# Flutter / Dart
+# ===========================
+.dart_tool/
+.packages
+.pub/
+build/
+*.iml
+*.ipr
+*.iws
+.flutter-plugins
+.flutter-plugins-dependencies
+.metadata
+
+# ===========================
+# IDE & Editor
+# ===========================
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# ===========================
+# Agent / AI Tools (not project source)
+# ===========================
+.agent/
+.agents/
+.ecc_temp/
+.superpowers/
+.tmp/
+.specify/
+.osgrep
+.memsearch
+setup-agent-skills.ps1
+skills-lock.json
+AGENTS.md
+
+# ===========================
+# Build & Log artifacts
+# ===========================
+*.log
+flutter_test_current.log
+flutter_test_expanded.log
+flutter_test_full.log
+flutter_version_bg.log
+flutter_version_capture.log
+tafsir_browser_screen_test.log
+tafsir_browser_screen_test.stderr.log
+tafsir_browser_screen_test.stdout.log
+
+# ===========================
+# OS-specific
+# ===========================
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# ===========================
+# Large binary / heap dumps
+# ===========================
+*.hprof
+
+# ===========================
+# Android
+# ===========================
+**/android/**/gradle-wrapper.jar
+**/android/.gradle
+**/android/captures/
+**/android/gradlew
+**/android/gradlew.bat
+**/android/local.properties
+**/android/**/GeneratedPluginRegistrant.java
+**/android/key.properties
+*.jks
+
+# ===========================
+# iOS
+# ===========================
+**/ios/**/*.mode1v3
+**/ios/**/*.mode2v3
+**/ios/**/*.moved-aside
+**/ios/**/*.pbxuser
+**/ios/**/*.perspectivev3
+**/ios/**/project.xcworkspace/
+**/ios/**/xcuserdata
+**/ios/.symlinks/
+**/ios/Flutter/.last_build_id
+**/ios/Flutter/flutter_export_environment.sh
+**/ios/ServiceDefinitions.json
+**/ios/Runner/GeneratedPluginRegistrant.*
+**/ios/Pods/
+
+# ===========================
+# Web
+# ===========================
+**/web/favicon.png

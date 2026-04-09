@@ -1,0 +1,92 @@
+[
+  {
+    "id": "adam-story",
+    "title_ar": "قصة آدم",
+    "title_en": "Adam",
+    "description_ar": "بداية خلق الإنسان والابتلاء الأول.",
+    "description_en": "Creation of Adam and the first human test.",
+    "category": "stories",
+    "icon_key": "person",
+    "references": ["2:30", "7:19", "20:122"]
+  },
+  {
+    "id": "nuh-story",
+    "title_ar": "قصة نوح",
+    "title_en": "Nuh",
+    "description_ar": "دعوة نوح وصبره وبناء السفينة.",
+    "description_en": "The call of Nuh, his patience, and the ark.",
+    "category": "stories",
+    "icon_key": "sailing",
+    "references": ["11:36", "11:37", "71:1"]
+  },
+  {
+    "id": "musa-pharaoh",
+    "title_ar": "موسى وفرعون",
+    "title_en": "Musa and Pharaoh",
+    "description_ar": "مواجهة الطغيان وآيات النجاة.",
+    "description_en": "Confronting tyranny and verses of deliverance.",
+    "category": "stories",
+    "icon_key": "waves",
+    "references": ["20:24", "26:16", "79:18"]
+  },
+  {
+    "id": "fasting",
+    "title_ar": "الصيام",
+    "title_en": "Fasting",
+    "description_ar": "الآيات المؤسسة لأحكام الصيام وآدابه.",
+    "description_en": "Foundational verses about fasting and its guidance.",
+    "category": "laws",
+    "icon_key": "schedule",
+    "references": ["2:183", "2:185", "2:187"]
+  },
+  {
+    "id": "charity",
+    "title_ar": "الصدقة والإنفاق",
+    "title_en": "Charity",
+    "description_ar": "الإنفاق في سبيل الله ومصارف الزكاة.",
+    "description_en": "Giving in Allah's cause and the channels of zakah.",
+    "category": "laws",
+    "icon_key": "volunteer_activism",
+    "references": ["2:261", "9:60", "57:18"]
+  },
+  {
+    "id": "trusts-contracts",
+    "title_ar": "العهود والأمانات",
+    "title_en": "Trusts and Contracts",
+    "description_ar": "الوفاء بالعقود وأداء الأمانات والعدل.",
+    "description_en": "Keeping covenants, honoring trusts, and justice.",
+    "category": "laws",
+    "icon_key": "gavel",
+    "references": ["4:58", "5:1", "2:282"]
+  },
+  {
+    "id": "paradise",
+    "title_ar": "الجنة",
+    "title_en": "Paradise",
+    "description_ar": "نعيم الجنة وما أعده الله لأهلها.",
+    "description_en": "Verses describing the Garden and its reward.",
+    "category": "afterlife",
+    "icon_key": "spa",
+    "references": ["55:46", "56:12", "76:12"]
+  },
+  {
+    "id": "hellfire",
+    "title_ar": "النار",
+    "title_en": "Hellfire",
+    "description_ar": "مشاهد الوعيد والعاقبة لمن أعرض.",
+    "description_en": "Warnings and scenes of punishment for those who turn away.",
+    "category": "afterlife",
+    "icon_key": "local_fire_department",
+    "references": ["4:56", "14:16", "67:6"]
+  },
+  {
+    "id": "day-of-judgment",
+    "title_ar": "يوم القيامة",
+    "title_en": "Day of Judgment",
+    "description_ar": "القيام للحساب وظهور الأعمال والجزاء.",
+    "description_en": "Resurrection, reckoning, and the final return.",
+    "category": "afterlife",
+    "icon_key": "hourglass_bottom",
+    "references": ["22:7", "69:18", "99:6"]
+  }
+]
