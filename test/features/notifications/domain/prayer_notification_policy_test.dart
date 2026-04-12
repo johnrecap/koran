@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:quran_kareem/features/more/domain/hijri_calendar_month.dart';
-import 'package:quran_kareem/features/more/domain/prayer_time_models.dart';
+import 'package:quran_kareem/features/prayer/domain/hijri_calendar_month.dart';
+import 'package:quran_kareem/features/prayer/domain/prayer_time_models.dart';
 import 'package:quran_kareem/features/notifications/domain/notification_launch_target.dart';
 import 'package:quran_kareem/features/notifications/domain/notification_reminder_type.dart';
 import 'package:quran_kareem/features/notifications/domain/prayer_notification_policy.dart';

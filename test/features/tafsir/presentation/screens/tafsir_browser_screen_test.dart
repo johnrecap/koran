@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:quran_kareem/core/localization/app_localizations.dart';
+import 'package:quran_kareem/features/ai/providers/ai_providers.dart';
 import 'package:quran_kareem/features/reader/domain/reader_ayah_insights_policy.dart';
 import 'package:quran_kareem/features/tafsir/domain/insight_section_models.dart';
 import 'package:quran_kareem/features/tafsir/domain/tafsir_browser_state.dart';
@@ -201,6 +202,48 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Route 3:18'), findsOneWidget);
+  });
+
+  testWidgets('shows the AI simplify entry inside the tafsir section',
+      (tester) async {
+    await tester.pumpWidget(
+      _buildHarness(
+        overrides: [
+          tafsirBrowserTargetProvider.overrideWith((ref, args) async => _target),
+          tafsirBrowserSourceOptionsProvider.overrideWith(
+            (ref) async => const <TafsirBrowserSourceOption>[],
+          ),
+          tafsirSectionProvider.overrideWith(
+            (ref, target) async => const InsightSectionLoaded<
+                TafsirBrowserLoadedContent>(
+              TafsirBrowserLoadedContent(
+                verseText: 'Arabic verse text',
+                bodyText:
+                    'This tafsir body is intentionally long enough to show the AI simplify entry in the section.',
+              ),
+            ),
+          ),
+          wordMeaningSectionProvider.overrideWith(
+            (ref, target) async => const InsightSectionUnavailable(),
+          ),
+          asbaabSectionProvider.overrideWith(
+            (ref, target) async => const InsightSectionUnavailable(),
+          ),
+          relatedAyahsSectionProvider.overrideWith(
+            (ref, target) async => const InsightSectionUnavailable(),
+          ),
+          aiAvailableProvider.overrideWith((ref) => true),
+          aiQuotaExhaustedProvider.overrideWith((ref) async => false),
+        ],
+        child: const TafsirBrowserScreen(
+          surahNumber: 2,
+          ayahNumber: 255,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Simplify tafsir'), findsOneWidget);
   });
 }
 

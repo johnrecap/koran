@@ -29,153 +29,177 @@ class StoryCard extends StatelessWidget {
     final percent = progress?.completionPercent(story.chapterCount) ?? 0;
     final showProgress = percent > 0 && !(progress?.isCompleted ?? false);
 
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        key: Key('story-card-${story.id}'),
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(24),
-        child: Ink(
-          decoration: BoxDecoration(
-            color: isDark ? AppColors.surfaceDarkNav : Colors.white,
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(
-              color: _accentColorFor(story.category).withValues(
-                alpha: isDark ? 0.26 : 0.14,
+    return Tooltip(
+      message: _actionLabel(context),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          key: Key('story-card-${story.id}'),
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(24),
+          child: Ink(
+            decoration: BoxDecoration(
+              color: isDark ? AppColors.surfaceDarkNav : Colors.white,
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(
+                color: _accentColorFor(story.category).withValues(
+                  alpha: isDark ? 0.26 : 0.14,
+                ),
               ),
-            ),
-            boxShadow: isDark
-                ? null
-                : [
-                    BoxShadow(
-                      color: _accentColorFor(story.category).withValues(
-                        alpha: 0.08,
-                      ),
-                      blurRadius: 18,
-                      offset: const Offset(0, 10),
-                    ),
-                  ],
-          ),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 14),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      width: 46,
-                      height: 46,
-                      decoration: BoxDecoration(
+              boxShadow: isDark
+                  ? null
+                  : [
+                      BoxShadow(
                         color: _accentColorFor(story.category).withValues(
-                          alpha: isDark ? 0.2 : 0.12,
+                          alpha: 0.08,
                         ),
-                        borderRadius: BorderRadius.circular(14),
+                        blurRadius: 18,
+                        offset: const Offset(0, 10),
                       ),
-                      child: Icon(
-                        _iconFor(story.iconKey),
+                    ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 14),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: 46,
+                        height: 46,
+                        decoration: BoxDecoration(
+                          color: _accentColorFor(story.category).withValues(
+                            alpha: isDark ? 0.2 : 0.12,
+                          ),
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        child: Icon(
+                          _iconFor(story.iconKey),
+                          color: _accentColorFor(story.category),
+                        ),
+                      ),
+                      const Spacer(),
+                      if (isBookmarked)
+                        Tooltip(
+                          message: context.l10n.storiesFavorites,
+                          child: Icon(
+                            Icons.favorite_rounded,
+                            key: Key('story-card-bookmark-${story.id}'),
+                            color: AppColors.gold,
+                            size: 20,
+                          ),
+                        ),
+                      if (progress?.isCompleted ?? false) ...[
+                        if (isBookmarked) const SizedBox(width: 6),
+                        Tooltip(
+                          message: context.l10n.storiesCompleted,
+                          child: Container(
+                            key: Key('story-card-complete-${story.id}'),
+                            padding: const EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                              color: AppColors.meccan.withValues(
+                                alpha: isDark ? 0.25 : 0.16,
+                              ),
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.check_rounded,
+                              size: 16,
+                              color: AppColors.meccan,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                  const SizedBox(height: 14),
+                  Text(
+                    title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontFamily: 'Amiri',
+                      fontSize: 22,
+                      fontWeight: FontWeight.w700,
+                      height: 1.25,
+                      color: isDark ? AppColors.textDark : AppColors.textLight,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    summary,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      color: AppColors.textMuted,
+                      height: 1.45,
+                    ),
+                  ),
+                  const Spacer(),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      _MetaChip(
+                        label: _categoryLabel(context, story.category),
                         color: _accentColorFor(story.category),
                       ),
-                    ),
-                    const Spacer(),
-                    if (isBookmarked)
-                      Icon(
-                        Icons.favorite_rounded,
-                        key: Key('story-card-bookmark-${story.id}'),
-                        color: AppColors.gold,
-                        size: 20,
-                      ),
-                    if (progress?.isCompleted ?? false) ...[
-                      if (isBookmarked) const SizedBox(width: 6),
-                      Container(
-                        key: Key('story-card-complete-${story.id}'),
-                        padding: const EdgeInsets.all(4),
-                        decoration: BoxDecoration(
-                          color: AppColors.meccan.withValues(
-                            alpha: isDark ? 0.25 : 0.16,
-                          ),
-                          shape: BoxShape.circle,
+                      _MetaChip(
+                        label: context.l10n.storiesChapterCount(
+                          localizations.formatDecimal(story.chapterCount),
                         ),
-                        child: const Icon(
-                          Icons.check_rounded,
-                          size: 16,
-                          color: AppColors.meccan,
+                      ),
+                      _MetaChip(
+                        label: context.l10n.storiesMinutesCount(
+                          localizations
+                              .formatDecimal(story.estimatedReadingMinutes),
                         ),
                       ),
                     ],
-                  ],
-                ),
-                const SizedBox(height: 14),
-                Text(
-                  title,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontFamily: 'Amiri',
-                    fontSize: 22,
-                    fontWeight: FontWeight.w700,
-                    height: 1.25,
-                    color: isDark ? AppColors.textDark : AppColors.textLight,
                   ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  summary,
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    color: AppColors.textMuted,
-                    height: 1.45,
-                  ),
-                ),
-                const Spacer(),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: [
-                    _MetaChip(
-                      label: _categoryLabel(context, story.category),
-                      color: _accentColorFor(story.category),
-                    ),
-                    _MetaChip(
-                      label: context.l10n.storiesChapterCount(
-                        localizations.formatDecimal(story.chapterCount),
-                      ),
-                    ),
-                    _MetaChip(
-                      label: context.l10n.storiesMinutesCount(
-                        localizations
-                            .formatDecimal(story.estimatedReadingMinutes),
+                  if (showProgress) ...[
+                    const SizedBox(height: 14),
+                    Tooltip(
+                      message: context.l10n.storiesReadingProgress,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(999),
+                        child: LinearProgressIndicator(
+                          key: Key('story-card-progress-${story.id}'),
+                          value: percent / 100,
+                          minHeight: 6,
+                          backgroundColor:
+                              _accentColorFor(story.category).withValues(
+                            alpha: isDark ? 0.14 : 0.08,
+                          ),
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            _accentColorFor(story.category),
+                          ),
+                        ),
                       ),
                     ),
                   ],
-                ),
-                if (showProgress) ...[
-                  const SizedBox(height: 14),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(999),
-                    child: LinearProgressIndicator(
-                      key: Key('story-card-progress-${story.id}'),
-                      value: percent / 100,
-                      minHeight: 6,
-                      backgroundColor:
-                          _accentColorFor(story.category).withValues(
-                        alpha: isDark ? 0.14 : 0.08,
-                      ),
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        _accentColorFor(story.category),
-                      ),
-                    ),
-                  ),
                 ],
-              ],
+              ),
             ),
           ),
         ),
       ),
     );
+  }
+
+  String _actionLabel(BuildContext context) {
+    if (progress?.isCompleted ?? false) {
+      return context.l10n.storiesReadNow;
+    }
+
+    if ((progress?.lastChapterIndex ?? -1) >= 0) {
+      return context.l10n.storiesContinueReading;
+    }
+
+    return context.l10n.storiesStartReading;
   }
 }
 

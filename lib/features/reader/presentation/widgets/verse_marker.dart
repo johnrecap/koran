@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:quran_kareem/core/constants/app_colors.dart';
+import 'package:quran_kareem/core/utils/arabic_digits.dart';
 
 /// Gold ornamental verse number marker ﴿١﴾
 /// Used inline with Quran text to mark verse boundaries.
@@ -46,7 +47,6 @@ class VerseMarker extends StatelessWidget {
 
   /// Convert number to Arabic-Indic numerals (٠١٢٣٤٥٦٧٨٩)
   static String toArabicNumerals(int number) {
-    const arabicDigits = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
-    return number.toString().split('').map((d) => arabicDigits[int.parse(d)]).join();
+    return toArabicDigits(number);
   }
 }

@@ -266,4 +266,39 @@ void main() {
     expect(repairedKhatma, isNotNull);
     expect(repairedKhatma!.isCompleted, isFalse);
   });
+
+  test('retains only the newest 500 reading sessions', () async {
+    final container = ProviderContainer();
+    addTearDown(container.dispose);
+
+    final notifier = container.read(sessionsProvider.notifier);
+    await notifier.ready;
+
+    final futures = <Future<void>>[
+      for (var index = 0; index < 505; index += 1)
+        notifier.upsertSession(
+          ReadingSession(
+            id: 'session-$index',
+            surahNumber: 1,
+            ayahNumber: index + 1,
+            surahName: 'Al-Fatihah',
+            timestamp: DateTime(2026, 4, 12, 12, 0, index),
+          ),
+        ),
+    ];
+
+    await Future.wait(futures);
+
+    final sessions = container.read(sessionsProvider);
+    expect(sessions, hasLength(500));
+    expect(sessions.first.id, 'session-504');
+    expect(sessions.last.id, 'session-5');
+
+    final prefs = await SharedPreferences.getInstance();
+    final stored = (jsonDecode(prefs.getString('readingSessions')!) as List)
+        .cast<Map<String, dynamic>>();
+    expect(stored, hasLength(500));
+    expect(stored.first['id'], 'session-504');
+    expect(stored.last['id'], 'session-5');
+  });
 }

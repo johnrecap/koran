@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:quran_kareem/core/localization/app_localizations.dart';
+import 'package:quran_kareem/features/ai/providers/ai_providers.dart';
 import 'package:quran_kareem/domain/entities/quran_entities.dart';
 import 'package:quran_kareem/features/library/presentation/screens/library_screen.dart';
 import 'package:quran_kareem/features/library/providers/library_providers.dart';
@@ -109,6 +110,41 @@ void main() {
 
     expect(find.text('Stories hub route'), findsOneWidget);
   });
+
+  testWidgets('shows the smart search entry when AI is available',
+      (tester) async {
+    SharedPreferences.setMockInitialValues(const <String, Object>{});
+
+    await tester.pumpWidget(
+      _buildHarness(
+        overrides: [
+          aiAvailableProvider.overrideWith((ref) => true),
+        ],
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('library-ai-search-entry')), findsOneWidget);
+  });
+
+  testWidgets('opens the smart search route from the library entry',
+      (tester) async {
+    SharedPreferences.setMockInitialValues(const <String, Object>{});
+
+    await tester.pumpWidget(
+      _buildHarness(
+        overrides: [
+          aiAvailableProvider.overrideWith((ref) => true),
+        ],
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const Key('library-ai-search-entry')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('AI search route'), findsOneWidget);
+  });
 }
 
 Widget _buildHarness({
@@ -138,6 +174,7 @@ Widget _buildHarness({
           ),
         ],
       ),
+      aiAvailableProvider.overrideWith((ref) => false),
       ...overrides,
     ],
     child: MaterialApp.router(
@@ -164,6 +201,14 @@ Widget _buildHarness({
             builder: (context, state) => const Scaffold(
               body: Center(
                 child: Text('Stories hub route'),
+              ),
+            ),
+          ),
+          GoRoute(
+            path: '/library/ai-search',
+            builder: (context, state) => const Scaffold(
+              body: Center(
+                child: Text('AI search route'),
               ),
             ),
           ),

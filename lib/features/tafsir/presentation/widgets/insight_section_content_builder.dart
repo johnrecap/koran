@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quran_kareem/features/reader/domain/reader_ayah_insights_policy.dart';
 import 'package:quran_kareem/features/tafsir/domain/insight_section_config.dart';
 import 'package:quran_kareem/features/tafsir/domain/insight_section_models.dart';
 import 'package:quran_kareem/features/tafsir/domain/tafsir_browser_state.dart';
@@ -11,6 +12,7 @@ typedef InsightSectionAyahNavigator = void Function(int surahNumber, int ayahNum
 
 Widget buildInsightSectionChild({
   required BuildContext context,
+  required ReaderAyahInsightsTarget target,
   required InsightSectionConfig config,
   required InsightSectionData data,
   required InsightSectionAyahNavigator onNavigateToAyah,
@@ -23,6 +25,7 @@ Widget buildInsightSectionChild({
     case InsightSectionType.tafsir:
       return TafsirBrowserContentView.section(
         content: data.content as TafsirBrowserLoadedContent,
+        target: target,
       );
     case InsightSectionType.wordMeaning:
       return WordMeaningSectionView(

@@ -2,6 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:quran_kareem/core/localization/app_localizations.dart';
+import 'package:quran_kareem/features/ai/domain/verse_identifier.dart';
+import 'package:quran_kareem/features/ai/features/context/ai_verse_context_view.dart';
+import 'package:quran_kareem/features/ai/features/tadabbur/ai_tadabbur_view.dart';
+import 'package:quran_kareem/features/ai/features/simplify/ai_simplified_view.dart';
+import 'package:quran_kareem/features/ai/features/simplify/ai_simplify_button.dart';
+import 'package:quran_kareem/features/ai/features/simplify/tafsir_simplify_provider.dart';
+import 'package:quran_kareem/features/ai/providers/ai_providers.dart';
 import 'package:quran_kareem/features/reader/domain/reader_ayah_insights_policy.dart';
 import 'package:quran_kareem/features/tafsir/domain/insight_section_models.dart';
 import 'package:quran_kareem/features/tafsir/domain/tafsir_browser_state.dart';
@@ -146,7 +153,7 @@ class _ReaderAyahInsightsQuickView extends ConsumerWidget {
   }
 }
 
-class _ReaderAyahInsightsCompactView extends ConsumerWidget {
+class _ReaderAyahInsightsCompactView extends ConsumerStatefulWidget {
   const _ReaderAyahInsightsCompactView({
     required this.target,
     required this.tafsirContent,
@@ -156,11 +163,36 @@ class _ReaderAyahInsightsCompactView extends ConsumerWidget {
   final TafsirBrowserLoadedContent tafsirContent;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_ReaderAyahInsightsCompactView> createState() =>
+      _ReaderAyahInsightsCompactViewState();
+}
+
+class _ReaderAyahInsightsCompactViewState
+    extends ConsumerState<_ReaderAyahInsightsCompactView> {
+  bool _showSimplified = false;
+  bool _showVerseContext = false;
+  bool _showTadabbur = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final target = widget.target;
+    final tafsirContent = widget.tafsirContent;
     final wordMeaningsAsync = ref.watch(wordMeaningSectionProvider(target));
     final wordPreviewEntries = _resolveWordMeaningPreviewEntries(wordMeaningsAsync);
     final previewText = _buildTafsirPreview(tafsirContent.bodyText);
     final colorScheme = Theme.of(context).colorScheme;
+    final aiAvailable = ref.watch(aiAvailableProvider);
+    final normalizedTafsir =
+        tafsirContent.bodyText.replaceAll(RegExp(r'\s+'), ' ').trim();
+    final request = TafsirSimplifyRequest(
+      surah: target.surahNumber,
+      ayah: target.ayahNumber,
+      tafsirText: normalizedTafsir,
+    );
+    final verse = VerseIdentifier(
+      surah: target.surahNumber,
+      ayah: target.ayahNumber,
+    );
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
@@ -194,12 +226,31 @@ class _ReaderAyahInsightsCompactView extends ConsumerWidget {
               const SizedBox(height: 18),
               _CompactInsightSection(
                 title: context.l10n.insightSectionTafsir,
-                child: Text(
-                  previewText,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        height: 1.7,
-                        color: colorScheme.onSurface,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(
+                      previewText,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            height: 1.7,
+                            color: colorScheme.onSurface,
+                          ),
+                    ),
+                    if (normalizedTafsir.isNotEmpty) ...[
+                      const SizedBox(height: 14),
+                      AiSimplifyButton(
+                        onPressed: () {
+                          setState(() {
+                            _showSimplified = true;
+                          });
+                        },
                       ),
+                    ],
+                    if (_showSimplified) ...[
+                      const SizedBox(height: 12),
+                      AiSimplifiedView(request: request),
+                    ],
+                  ],
                 ),
               ),
               if (wordPreviewEntries.isNotEmpty) ...[
@@ -227,6 +278,50 @@ class _ReaderAyahInsightsCompactView extends ConsumerWidget {
                         ],
                       ),
                     ),
+                  ),
+                ),
+              ],
+              if (aiAvailable) ...[
+                const SizedBox(height: 18),
+                _CompactInsightSection(
+                  title: context.l10n.contextAndConnection,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      OutlinedButton(
+                        onPressed: () {
+                          setState(() {
+                            _showVerseContext = true;
+                          });
+                        },
+                        child: Text(context.l10n.verseContext),
+                      ),
+                      if (_showVerseContext) ...[
+                        const SizedBox(height: 12),
+                        AiVerseContextView(verse: verse),
+                      ],
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 18),
+                _CompactInsightSection(
+                  title: context.l10n.reflectionQuestions,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      OutlinedButton(
+                        onPressed: () {
+                          setState(() {
+                            _showTadabbur = true;
+                          });
+                        },
+                        child: Text(context.l10n.tadabburQuestions),
+                      ),
+                      if (_showTadabbur) ...[
+                        const SizedBox(height: 12),
+                        AiTadabburView(verse: verse),
+                      ],
+                    ],
                   ),
                 ),
               ],

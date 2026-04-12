@@ -39,4 +39,32 @@ void main() {
       expect(savedStates.single, isEmpty);
     },
   );
+
+  test('retains only the newest 200 manual bookmarks', () async {
+    List<ManualBookmark> latestSavedState = const <ManualBookmark>[];
+
+    final notifier = ManualBookmarksNotifier(
+      loadBookmarks: () async => const <ManualBookmark>[],
+      saveBookmarks: (bookmarks) async {
+        latestSavedState = List<ManualBookmark>.from(bookmarks);
+      },
+    );
+
+    await notifier.ready;
+
+    for (var index = 0; index < 205; index += 1) {
+      await notifier.toggle(
+        1,
+        index + 1,
+        'Al-Fatihah',
+      );
+    }
+
+    expect(notifier.state, hasLength(200));
+    expect(notifier.state.first.ayahNumber, 205);
+    expect(notifier.state.last.ayahNumber, 6);
+    expect(latestSavedState, hasLength(200));
+    expect(latestSavedState.first.ayahNumber, 205);
+    expect(latestSavedState.last.ayahNumber, 6);
+  });
 }

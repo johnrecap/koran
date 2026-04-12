@@ -124,6 +124,8 @@ class _PremiumPaywallSheetState extends ConsumerState<PremiumPaywallSheet> {
     return switch (widget.contextInfo.kind) {
       PaywallEntryKind.lockedAyahShareTemplate =>
         l10n.premiumAyahShareCardsLockedTemplateBody,
+      PaywallEntryKind.aiFeaturesQuotaExceeded =>
+        l10n.upgradeForUnlimitedAi,
     };
   }
 

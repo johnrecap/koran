@@ -23,7 +23,7 @@ class AppShell extends ConsumerWidget {
 
   int _currentIndex(String location) {
     if (location.startsWith('/analytics')) {
-      return 3;
+      return -1;
     }
 
     for (int i = 0; i < _tabs.length; i++) {

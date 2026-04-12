@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:quran_kareem/core/constants/app_colors.dart';
 import 'package:quran_kareem/core/localization/app_localizations.dart';
+import 'package:quran_kareem/core/utils/arabic_digits.dart';
 import 'package:quran_kareem/domain/entities/quran_entities.dart';
 
 class VerseActionMenu extends StatelessWidget {
@@ -177,15 +178,11 @@ class VerseActionMenu extends StatelessWidget {
 
   String _formatAyahNumber(BuildContext context) {
     if (Localizations.localeOf(context).languageCode == 'ar') {
-      return _toArabicDigits(ayah.ayahNumber);
+      return toArabicDigits(ayah.ayahNumber);
     }
     return ayah.ayahNumber.toString();
   }
 
-  String _toArabicDigits(int value) {
-    const digits = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
-    return value.toString().split('').map((c) => digits[int.parse(c)]).join();
-  }
 }
 
 class _ActionButton extends StatelessWidget {

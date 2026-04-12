@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:quran_kareem/core/constants/storage_keys.dart';
 import 'package:quran_kareem/core/utils/app_logger.dart';
 import 'package:quran_kareem/data/datasources/local/user_preferences.dart';
 import 'package:quran_kareem/features/quizzes/domain/quiz_models.dart';
@@ -85,5 +86,6 @@ class QuizHistoryRepository {
     return sorted;
   }
 
-  String _storageKey(QuizType type) => 'quiz_history_${type.name}';
+  String _storageKey(QuizType type) =>
+      '${StorageKeys.quizHistoryPrefix}${type.name}';
 }

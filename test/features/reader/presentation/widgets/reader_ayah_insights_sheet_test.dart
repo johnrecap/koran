@@ -3,6 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:quran_kareem/core/localization/app_localizations.dart';
+import 'package:quran_kareem/features/ai/domain/ai_response.dart';
+import 'package:quran_kareem/features/ai/features/context/verse_context_provider.dart';
+import 'package:quran_kareem/features/ai/features/tadabbur/tadabbur_questions_provider.dart';
+import 'package:quran_kareem/features/ai/providers/ai_providers.dart';
 import 'package:quran_kareem/features/reader/domain/reader_ayah_insights_policy.dart';
 import 'package:quran_kareem/features/reader/presentation/widgets/reader_ayah_insights_sheet.dart';
 import 'package:quran_kareem/features/tafsir/domain/insight_section_models.dart';
@@ -174,6 +178,79 @@ void main() {
     expect(find.text('التفسير'), findsOneWidget);
     expect(find.text('معاني الكلمات'), findsOneWidget);
     expect(find.text('فتح متصفح التفسير'), findsOneWidget);
+  });
+  testWidgets('shows the AI simplify entry inside the compact tafsir sheet',
+      (tester) async {
+    await tester.pumpWidget(
+      _buildHarness(
+        overrides: [
+          tafsirSectionProvider.overrideWith(
+            (ref, target) async => const InsightSectionLoaded<
+                TafsirBrowserLoadedContent>(
+              TafsirBrowserLoadedContent(
+                verseText: 'Arabic verse text',
+                bodyText:
+                    'This tafsir body is intentionally long enough to show the AI simplify entry in the compact sheet.',
+              ),
+            ),
+          ),
+          wordMeaningSectionProvider.overrideWith(
+            (ref, target) async => const InsightSectionUnavailable(),
+          ),
+          aiAvailableProvider.overrideWith((ref) => true),
+          aiQuotaExhaustedProvider.overrideWith((ref) async => false),
+        ],
+        child: const ReaderAyahInsightsSheet(
+          target: _target,
+          isDark: false,
+        ),
+      ),
+    );
+    await _pumpFrames(tester);
+
+    expect(find.text('Simplify tafsir'), findsOneWidget);
+  });
+
+  testWidgets('shows verse context and tadabbur sections when AI is available',
+      (tester) async {
+    await tester.pumpWidget(
+      _buildHarness(
+        overrides: [
+          tafsirSectionProvider.overrideWith(
+            (ref, target) async => const InsightSectionLoaded<
+                TafsirBrowserLoadedContent>(
+              TafsirBrowserLoadedContent(
+                verseText: 'Arabic verse text',
+                bodyText: 'Compact tafsir body that is long enough for AI sections.',
+              ),
+            ),
+          ),
+          wordMeaningSectionProvider.overrideWith(
+            (ref, target) async => const InsightSectionUnavailable(),
+          ),
+          aiAvailableProvider.overrideWith((ref) => true),
+          aiQuotaExhaustedProvider.overrideWith((ref) async => false),
+          verseContextProvider.overrideWith(
+            (ref, verse) async => AiResponse.fromRaw(
+              'Context explanation',
+              'test',
+              120,
+            ),
+          ),
+          tadabburQuestionsProvider.overrideWith(
+            (ref, verse) async => const ['Reflection question'],
+          ),
+        ],
+        child: const ReaderAyahInsightsSheet(
+          target: _target,
+          isDark: false,
+        ),
+      ),
+    );
+    await _pumpFrames(tester);
+
+    expect(find.text('Context and Connection'), findsOneWidget);
+    expect(find.text('Reflection Questions'), findsOneWidget);
   });
 }
 

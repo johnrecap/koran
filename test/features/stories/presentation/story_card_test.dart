@@ -50,6 +50,8 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byKey(const Key('story-card-progress-adam')), findsOneWidget);
+    expect(find.byTooltip('Continue reading'), findsOneWidget);
+    expect(find.byTooltip('Reading progress'), findsOneWidget);
     expect(find.byKey(const Key('story-card-complete-adam')), findsNothing);
   });
 
@@ -72,6 +74,9 @@ void main() {
 
     expect(find.byKey(const Key('story-card-complete-adam')), findsOneWidget);
     expect(find.byKey(const Key('story-card-bookmark-adam')), findsOneWidget);
+    expect(find.byTooltip('Read now'), findsOneWidget);
+    expect(find.byTooltip('Completed'), findsOneWidget);
+    expect(find.byTooltip('Favorites'), findsOneWidget);
   });
 }
 

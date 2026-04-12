@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:quran_kareem/core/constants/storage_keys.dart';
 import 'package:quran_kareem/core/utils/app_logger.dart';
 import 'package:quran_kareem/features/stories/domain/story_reading_progress.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -7,7 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class StoryProgressRepository {
   StoryProgressRepository(this._prefs);
 
-  static const String storageKey = 'story_progress';
+  static const String storageKey = StorageKeys.storyProgress;
 
   final SharedPreferences _prefs;
 

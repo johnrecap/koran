@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:quran_kareem/core/constants/storage_keys.dart';
 import 'package:quran_kareem/core/utils/app_logger.dart';
 import 'package:quran_kareem/data/datasources/local/user_preferences.dart';
 import 'package:quran_kareem/domain/entities/quran_entities.dart';
@@ -15,7 +16,7 @@ class AyahNotesNotifier extends StateNotifier<Map<String, AyahNote>> {
     ready = _load();
   }
 
-  static const _storageKey = 'ayahNotes';
+  static const _storageKey = StorageKeys.ayahNotes;
   late final Future<void> ready;
 
   static String noteKeyFor(int surahNumber, int ayahNumber) {

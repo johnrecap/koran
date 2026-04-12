@@ -137,6 +137,7 @@ class RevenueCatPremiumPurchasesService implements PremiumPurchasesService {
       billingAvailable: true,
       grantedAccesses: <PremiumAccessKey>{
         PremiumAccessKey.ayahShareCardsPremiumTemplates,
+        PremiumAccessKey.aiFeatures,
       },
     );
   }

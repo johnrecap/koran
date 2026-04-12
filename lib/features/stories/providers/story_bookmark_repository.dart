@@ -1,12 +1,13 @@
 import 'dart:convert';
 
+import 'package:quran_kareem/core/constants/storage_keys.dart';
 import 'package:quran_kareem/core/utils/app_logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class StoryBookmarkRepository {
   StoryBookmarkRepository(this._prefs);
 
-  static const String storageKey = 'story_bookmarks';
+  static const String storageKey = StorageKeys.storyBookmarks;
 
   final SharedPreferences _prefs;
 

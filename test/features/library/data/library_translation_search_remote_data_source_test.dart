@@ -54,4 +54,47 @@ void main() {
     expect(results.single.arabicText, 'اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ');
     expect(results.single.translationText, contains('Ever-Living'));
   });
+
+  test('decodes common HTML entities inside translation search results',
+      () async {
+    final client = MockClient((request) async {
+      return http.Response.bytes(
+        utf8.encode(
+          jsonEncode({
+            'search': {
+              'results': [
+                {
+                  'verse_key': '2:255',
+                  'text': 'Arabic text',
+                  'translations': [
+                    {
+                      'text':
+                          'Mercy &lt;peace&gt; &quot;quotes&quot; &#39;single&#39; &amp; more',
+                      'resource_id': 85,
+                    },
+                  ],
+                },
+              ],
+            },
+          }),
+        ),
+        200,
+        headers: const <String, String>{
+          'content-type': 'application/json; charset=utf-8',
+        },
+      );
+    });
+
+    final dataSource = LibraryTranslationSearchRemoteDataSource(client: client);
+
+    final results = await dataSource.searchTranslations(
+      query: 'mercy',
+      resourceId: 85,
+    );
+
+    expect(
+      results.single.translationText,
+      'Mercy <peace> "quotes" \'single\' & more',
+    );
+  });
 }

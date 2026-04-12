@@ -22,6 +22,7 @@ void main() {
     expect(find.text('Verse body'), findsOneWidget);
     expect(find.text('Surah Al-Baqarah: 30-32'), findsOneWidget);
     expect(find.text('Verse context'), findsOneWidget);
+    expect(find.byTooltip('Open in reader'), findsOneWidget);
   });
 
   testWidgets('tap fires the provided callback', (tester) async {

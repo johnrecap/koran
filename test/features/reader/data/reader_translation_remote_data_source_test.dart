@@ -101,5 +101,44 @@ void main() {
       expect(page.translations.single.ayahNumber, 3);
       expect(page.translations.single.verseKey, '1:3');
     });
+
+    test('decodes common HTML entities in translation text', () async {
+      final client = MockClient((request) async {
+        return http.Response(
+          jsonEncode({
+            'verses': [
+              {
+                'verse_number': 1,
+                'verse_key': '1:1',
+                'translations': [
+                  {
+                    'id': 96343,
+                    'resource_id': 20,
+                    'text':
+                        'Mercy &lt;peace&gt; &quot;quotes&quot; &#39;single&#39; &amp; more',
+                  },
+                ],
+              },
+            ],
+            'pagination': {
+              'next_page': null,
+            },
+          }),
+          200,
+        );
+      });
+
+      final dataSource = ReaderTranslationRemoteDataSource(client: client);
+
+      final page = await dataSource.fetchTranslationsPage(
+        surahNumber: 1,
+        resourceId: 20,
+      );
+
+      expect(
+        page.translations.single.text,
+        'Mercy <peace> "quotes" \'single\' & more',
+      );
+    });
   });
 }

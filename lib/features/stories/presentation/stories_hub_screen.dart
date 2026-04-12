@@ -133,6 +133,7 @@ class _StoriesHubLoadedBody extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final stories = ref.watch(filteredStoriesProvider);
+    final filter = ref.watch(storyFilterProvider);
     final progressByStory = ref.watch(storyProgressNotifierProvider);
     final bookmarks = ref.watch(storyBookmarkNotifierProvider);
     final stats = ref.watch(storyCompletionStatsProvider);
@@ -199,7 +200,9 @@ class _StoriesHubLoadedBody extends ConsumerWidget {
             builder: (context, constraints) {
               if (stories.isEmpty) {
                 return _StoriesHubEmptyState(
-                  title: context.l10n.storiesNoResults,
+                  title: filter.showFavorites
+                      ? context.l10n.storiesNoFavorites
+                      : context.l10n.storiesNoStoriesFound,
                 );
               }
 

@@ -22,13 +22,38 @@ class Surah {
     return Surah(
       number: map['id'] as int,
       nameArabic: map['name_arabic'] as String,
-      nameEnglish: map['name_simple'] as String? ?? map['name_english'] as String? ?? '',
+      nameEnglish:
+          map['name_simple'] as String? ?? map['name_english'] as String? ?? '',
       nameTransliteration: map['name_transliteration'] as String? ?? '',
       ayahCount: map['ayah_count'] as int? ?? map['verses_count'] as int? ?? 0,
       revelationType: map['revelation_type'] as String? ?? 'Meccan',
       page: map['page'] as int? ?? 1,
     );
   }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        other is Surah &&
+            number == other.number &&
+            nameArabic == other.nameArabic &&
+            nameEnglish == other.nameEnglish &&
+            nameTransliteration == other.nameTransliteration &&
+            ayahCount == other.ayahCount &&
+            revelationType == other.revelationType &&
+            page == other.page;
+  }
+
+  @override
+  int get hashCode => Object.hash(
+        number,
+        nameArabic,
+        nameEnglish,
+        nameTransliteration,
+        ayahCount,
+        revelationType,
+        page,
+      );
 }
 
 /// Represents a single Ayah (verse)
@@ -62,6 +87,30 @@ class Ayah {
       hizb: map['hizb'] as int? ?? 1,
     );
   }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        other is Ayah &&
+            id == other.id &&
+            surahNumber == other.surahNumber &&
+            ayahNumber == other.ayahNumber &&
+            text == other.text &&
+            page == other.page &&
+            juz == other.juz &&
+            hizb == other.hizb;
+  }
+
+  @override
+  int get hashCode => Object.hash(
+        id,
+        surahNumber,
+        ayahNumber,
+        text,
+        page,
+        juz,
+        hizb,
+      );
 }
 
 /// Represents a Bookmark
@@ -79,6 +128,26 @@ class Bookmark {
     required this.name,
     required this.createdAt,
   });
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        other is Bookmark &&
+            id == other.id &&
+            surahNumber == other.surahNumber &&
+            ayahNumber == other.ayahNumber &&
+            name == other.name &&
+            createdAt == other.createdAt;
+  }
+
+  @override
+  int get hashCode => Object.hash(
+        id,
+        surahNumber,
+        ayahNumber,
+        name,
+        createdAt,
+      );
 }
 
 /// Represents a user Note on an Ayah
@@ -98,6 +167,28 @@ class AyahNote {
     required this.createdAt,
     required this.updatedAt,
   });
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        other is AyahNote &&
+            id == other.id &&
+            surahNumber == other.surahNumber &&
+            ayahNumber == other.ayahNumber &&
+            content == other.content &&
+            createdAt == other.createdAt &&
+            updatedAt == other.updatedAt;
+  }
+
+  @override
+  int get hashCode => Object.hash(
+        id,
+        surahNumber,
+        ayahNumber,
+        content,
+        createdAt,
+        updatedAt,
+      );
 }
 
 /// Reading position for saving/restoring
@@ -131,4 +222,22 @@ class ReadingPosition {
       savedAt: DateTime.parse(map['savedAt'] as String),
     );
   }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        other is ReadingPosition &&
+            surahNumber == other.surahNumber &&
+            ayahNumber == other.ayahNumber &&
+            page == other.page &&
+            savedAt == other.savedAt;
+  }
+
+  @override
+  int get hashCode => Object.hash(
+        surahNumber,
+        ayahNumber,
+        page,
+        savedAt,
+      );
 }

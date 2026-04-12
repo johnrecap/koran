@@ -1,15 +1,19 @@
 import 'dart:async';
+import 'dart:ui' show PlatformDispatcher;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:quran_library/quran_library.dart';
+import 'core/services/data_migration_service.dart';
+import 'core/services/error_reporting_service.dart';
 import 'core/localization/app_locale_policy.dart';
 import 'core/localization/app_localizations.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme_mode_policy.dart';
 import 'core/theme/app_theme.dart';
+import 'core/utils/app_logger.dart';
 import 'data/datasources/local/user_preferences.dart';
 import 'features/notifications/data/notification_timezone_service.dart';
 import 'features/notifications/data/local_notifications_service.dart';
@@ -26,8 +30,26 @@ import 'features/settings/providers/settings_providers.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  ErrorReporting.install(const NoopErrorReportingService());
+  FlutterError.onError = (details) {
+    FlutterError.presentError(details);
+    AppLogger.fatal(
+      'FlutterError.onError',
+      details.exception,
+      details.stack,
+    );
+  };
+  PlatformDispatcher.instance.onError = (error, stackTrace) {
+    AppLogger.fatal(
+      'PlatformDispatcher.instance.onError',
+      error,
+      stackTrace,
+    );
+    return true;
+  };
 
   await QuranLibrary.init();
+  await DataMigrationService().run();
   final preferenceResults = await Future.wait<Object?>([
     UserPreferences.getThemeMode(),
     UserPreferences.getLanguage(),

@@ -1,4 +1,4 @@
-import 'package:quran_kareem/features/more/domain/prayer_time_models.dart';
+import 'package:quran_kareem/features/prayer/domain/prayer_time_models.dart';
 import 'package:quran_kareem/features/notifications/domain/notification_launch_target.dart';
 import 'package:quran_kareem/features/notifications/domain/notification_reminder_type.dart';
 import 'package:quran_kareem/features/notifications/domain/notification_schedule_window_policy.dart';

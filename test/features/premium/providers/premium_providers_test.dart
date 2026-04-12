@@ -39,6 +39,10 @@ void main() {
       container.read(hasPremiumAccessProvider(PremiumAccessKey.ayahShareCardsPremiumTemplates)),
       isTrue,
     );
+    expect(
+      container.read(hasPremiumAccessProvider(PremiumAccessKey.aiFeatures)),
+      isTrue,
+    );
   });
 
   test('unsupported purchases service fails safe and keeps premium access off',
@@ -93,6 +97,10 @@ void main() {
       container.read(hasPremiumAccessProvider(
         PremiumAccessKey.ayahShareCardsPremiumTemplates,
       )),
+      isTrue,
+    );
+    expect(
+      container.read(hasPremiumAccessProvider(PremiumAccessKey.aiFeatures)),
       isTrue,
     );
   });

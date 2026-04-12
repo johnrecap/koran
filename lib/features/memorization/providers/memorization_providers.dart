@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'package:quran_kareem/core/constants/storage_keys.dart';
 import 'package:quran_kareem/core/utils/app_logger.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:quran_kareem/core/providers/persistent_state_notifier.dart';
 import 'package:quran_kareem/data/datasources/local/quran_database.dart';
 import 'package:quran_kareem/data/datasources/local/user_preferences.dart';
 import 'package:quran_kareem/domain/entities/quran_entities.dart';
@@ -18,41 +20,50 @@ final sessionsProvider =
   (ref) => SessionsNotifier(),
 );
 
-class SessionsNotifier extends StateNotifier<List<ReadingSession>> {
-  SessionsNotifier() : super([]) {
-    _ready = _load();
-  }
+class SessionsNotifier extends PersistentStateNotifier<List<ReadingSession>> {
+  static const int _maxSessions = 500;
 
-  late final Future<void> _ready;
+  SessionsNotifier() : super(const <ReadingSession>[]);
+
   final DebouncedSaveScheduler _saveScheduler = DebouncedSaveScheduler();
 
-  Future<void> get ready => _ready;
-
-  Future<void> _load() async {
+  @override
+  Future<List<ReadingSession>> loadPersistedState() async {
     final prefs = await UserPreferences.prefs;
-    final json = prefs.getString('readingSessions');
-    if (json != null) {
-      try {
-        final list = jsonDecode(json) as List;
-        state = list
-            .map((e) => ReadingSession.fromMap(e as Map<String, dynamic>))
-            .toList()
-          ..sort((a, b) => b.timestamp.compareTo(a.timestamp));
-      } catch (e, st) {
-        AppLogger.error('ReadingSessionsNotifier._load', e, st);
-        state = [];
-      }
+    final json = prefs.getString(StorageKeys.readingSessions);
+    if (json == null) {
+      return const <ReadingSession>[];
+    }
+
+    try {
+      final list = jsonDecode(json) as List<dynamic>;
+      return list
+          .map((e) => ReadingSession.fromMap(e as Map<String, dynamic>))
+          .toList()
+        ..sort((a, b) => b.timestamp.compareTo(a.timestamp));
+    } catch (e, st) {
+      AppLogger.error('ReadingSessionsNotifier._load', e, st);
+      return const <ReadingSession>[];
     }
   }
 
-  Future<void> _save() async {
-    final prefs = await UserPreferences.prefs;
-    await prefs.setString(
-        'readingSessions', jsonEncode(state.map((s) => s.toMap()).toList()));
+  @override
+  List<ReadingSession> normalizeState(List<ReadingSession> state) {
+    return _trimSessions(state);
   }
 
-  Future<void> _scheduleSave() {
-    return _saveScheduler.schedule(_save);
+  @override
+  Future<void> persistState(
+    List<ReadingSession> previousState,
+    List<ReadingSession> currentState,
+  ) {
+    return _saveScheduler.schedule(() async {
+      final prefs = await UserPreferences.prefs;
+      await prefs.setString(
+        StorageKeys.readingSessions,
+        jsonEncode(currentState.map((session) => session.toMap()).toList()),
+      );
+    });
   }
 
   Future<void> addSession(ReadingSession session) async {
@@ -60,24 +71,24 @@ class SessionsNotifier extends StateNotifier<List<ReadingSession>> {
   }
 
   Future<void> upsertSession(ReadingSession session) async {
-    await _ready;
+    await updateState((current) {
+      final nextState = [
+        session,
+        for (final existing in current)
+          if (existing.id != session.id &&
+              (session.khatmaId == null ||
+                  existing.khatmaId != session.khatmaId))
+            existing,
+      ]..sort((a, b) => b.timestamp.compareTo(a.timestamp));
 
-    final nextState = [
-      session,
-      for (final existing in state)
-        if (existing.id != session.id &&
-            (session.khatmaId == null || existing.khatmaId != session.khatmaId))
-          existing,
-    ]..sort((a, b) => b.timestamp.compareTo(a.timestamp));
-
-    state = nextState;
-    await _scheduleSave();
+      return nextState;
+    });
   }
 
   Future<void> removeSession(String id) async {
-    await _ready;
-    state = state.where((s) => s.id != id).toList();
-    await _scheduleSave();
+    await updateState(
+      (current) => current.where((session) => session.id != id).toList(),
+    );
   }
 
   /// Get only regular sessions (no khatma)
@@ -92,6 +103,14 @@ class SessionsNotifier extends StateNotifier<List<ReadingSession>> {
   void dispose() {
     _saveScheduler.dispose();
     super.dispose();
+  }
+
+  List<ReadingSession> _trimSessions(List<ReadingSession> sessions) {
+    if (sessions.length <= _maxSessions) {
+      return sessions;
+    }
+
+    return sessions.take(_maxSessions).toList(growable: false);
   }
 }
 
@@ -125,68 +144,72 @@ final khatmasProvider = StateNotifierProvider<KhatmasNotifier, List<Khatma>>(
   (ref) => KhatmasNotifier(),
 );
 
-class KhatmasNotifier extends StateNotifier<List<Khatma>> {
-  KhatmasNotifier() : super([]) {
-    _ready = _load();
-  }
+class KhatmasNotifier extends PersistentStateNotifier<List<Khatma>> {
+  KhatmasNotifier() : super(const <Khatma>[]);
 
-  late final Future<void> _ready;
   final DebouncedSaveScheduler _saveScheduler = DebouncedSaveScheduler();
 
-  Future<void> get ready => _ready;
-
-  Future<void> _load() async {
+  @override
+  Future<List<Khatma>> loadPersistedState() async {
     final prefs = await UserPreferences.prefs;
-    final json = prefs.getString('khatmas');
-    if (json != null) {
-      try {
-        final list = jsonDecode(json) as List;
-        final loadedKhatmas =
-            list.map((e) => Khatma.fromMap(e as Map<String, dynamic>)).toList();
-        final loadedSessions =
-            KhatmaSessionIntegrityPolicy.loadStoredSessions(prefs);
-        final repairedKhatmas = KhatmaSessionIntegrityPolicy.sanitizeAllKhatmas(
-          khatmas: loadedKhatmas,
-          sessions: loadedSessions,
-        );
-        state = repairedKhatmas;
+    final json = prefs.getString(StorageKeys.khatmas);
+    if (json == null) {
+      return const <Khatma>[];
+    }
 
-        if (!KhatmaSessionIntegrityPolicy.sameKhatmas(
-          loadedKhatmas,
-          repairedKhatmas,
-        )) {
-          await prefs.setString(
-            'khatmas',
-            jsonEncode(repairedKhatmas.map((k) => k.toMap()).toList()),
-          );
-        }
-      } catch (e, st) {
-        AppLogger.error('KhatmasNotifier._load', e, st);
-        state = [];
+    try {
+      final list = jsonDecode(json) as List<dynamic>;
+      final loadedKhatmas =
+          list.map((e) => Khatma.fromMap(e as Map<String, dynamic>)).toList();
+      final loadedSessions = KhatmaSessionIntegrityPolicy.loadStoredSessions(
+        prefs,
+      );
+      final repairedKhatmas = KhatmaSessionIntegrityPolicy.sanitizeAllKhatmas(
+        khatmas: loadedKhatmas,
+        sessions: loadedSessions,
+      );
+
+      if (!KhatmaSessionIntegrityPolicy.sameKhatmas(
+        loadedKhatmas,
+        repairedKhatmas,
+      )) {
+        await prefs.setString(
+          StorageKeys.khatmas,
+          jsonEncode(repairedKhatmas.map((k) => k.toMap()).toList()),
+        );
       }
+
+      return repairedKhatmas;
+    } catch (e, st) {
+      AppLogger.error('KhatmasNotifier._load', e, st);
+      return const <Khatma>[];
     }
   }
 
-  Future<void> _save() async {
-    final prefs = await UserPreferences.prefs;
-    await prefs.setString(
-        'khatmas', jsonEncode(state.map((k) => k.toMap()).toList()));
-  }
-
-  Future<void> _scheduleSave() {
-    return _saveScheduler.schedule(_save);
+  @override
+  Future<void> persistState(
+    List<Khatma> previousState,
+    List<Khatma> currentState,
+  ) {
+    return _saveScheduler.schedule(() async {
+      final prefs = await UserPreferences.prefs;
+      await prefs.setString(
+        StorageKeys.khatmas,
+        jsonEncode(currentState.map((khatma) => khatma.toMap()).toList()),
+      );
+    });
   }
 
   Future<void> addKhatma(Khatma khatma) async {
-    await _ready;
-    state = [khatma, ...state];
-    await _scheduleSave();
+    await updateState((current) => [khatma, ...current]);
   }
 
   Future<void> updateKhatma(Khatma updated) async {
-    await _ready;
-    state = state.map((k) => k.id == updated.id ? updated : k).toList();
-    await _scheduleSave();
+    await updateState(
+      (current) =>
+          current.map((khatma) => khatma.id == updated.id ? updated : khatma)
+              .toList(),
+    );
   }
 
   Future<void> recordPlannerProgress({
@@ -195,59 +218,56 @@ class KhatmasNotifier extends StateNotifier<List<Khatma>> {
     required DateTime timestamp,
     required int completedSurahs,
   }) async {
-    await _ready;
     final normalizedPage = pageNumber.clamp(1, Khatma.mushafPageCount);
     final dayKey = KhatmaPlannerSummaryPolicy.dayKey(timestamp);
 
-    state = state.map((khatma) {
-      if (khatma.id != khatmaId) {
-        return khatma;
-      }
+    await updateState((current) {
+      return current.map((khatma) {
+        if (khatma.id != khatmaId) {
+          return khatma;
+        }
 
-      final nextFurthestPage = normalizedPage > khatma.furthestPageRead
-          ? normalizedPage
-          : khatma.furthestPageRead;
-      final nextCompletedSurahs = completedSurahs > khatma.completedSurahs
-          ? completedSurahs
-          : khatma.completedSurahs;
-      final nextReadingDayKeys = khatma.readingDayKeys.contains(dayKey)
-          ? khatma.readingDayKeys
-          : [...khatma.readingDayKeys, dayKey]
-        ..sort();
+        final nextFurthestPage = normalizedPage > khatma.furthestPageRead
+            ? normalizedPage
+            : khatma.furthestPageRead;
+        final nextCompletedSurahs = completedSurahs > khatma.completedSurahs
+            ? completedSurahs
+            : khatma.completedSurahs;
+        final nextReadingDayKeys = khatma.readingDayKeys.contains(dayKey)
+            ? khatma.readingDayKeys
+            : [...khatma.readingDayKeys, dayKey]..sort();
 
-      return khatma.copyWith(
-        furthestPageRead: nextFurthestPage,
-        completedSurahs: nextCompletedSurahs,
-        readingDayKeys: nextReadingDayKeys,
-        completedDate: nextFurthestPage >= Khatma.mushafPageCount
-            ? (khatma.completedDate ?? timestamp)
-            : khatma.completedDate,
-      );
-    }).toList();
-
-    await _scheduleSave();
+        return khatma.copyWith(
+          furthestPageRead: nextFurthestPage,
+          completedSurahs: nextCompletedSurahs,
+          readingDayKeys: nextReadingDayKeys,
+          completedDate: nextFurthestPage >= Khatma.mushafPageCount
+              ? (khatma.completedDate ?? timestamp)
+              : khatma.completedDate,
+        );
+      }).toList();
+    });
   }
 
   Future<void> addTrackedMinutes({
     required String khatmaId,
     required int minutes,
   }) async {
-    await _ready;
     if (minutes <= 0) {
       return;
     }
 
-    state = state.map((khatma) {
-      if (khatma.id != khatmaId) {
-        return khatma;
-      }
+    await updateState((current) {
+      return current.map((khatma) {
+        if (khatma.id != khatmaId) {
+          return khatma;
+        }
 
-      return khatma.copyWith(
-        totalReadMinutes: khatma.totalReadMinutes + minutes,
-      );
-    }).toList();
-
-    await _scheduleSave();
+        return khatma.copyWith(
+          totalReadMinutes: khatma.totalReadMinutes + minutes,
+        );
+      }).toList();
+    });
   }
 
   /// Get active (non-completed) khatmas
@@ -334,7 +354,7 @@ final memorizationHubSummaryProvider = Provider<MemorizationHubSummary>((ref) {
 
 abstract final class KhatmaSessionIntegrityPolicy {
   static List<ReadingSession> loadStoredSessions(SharedPreferences prefs) {
-    final json = prefs.getString('readingSessions');
+    final json = prefs.getString(StorageKeys.readingSessions);
     if (json == null) {
       return const <ReadingSession>[];
     }

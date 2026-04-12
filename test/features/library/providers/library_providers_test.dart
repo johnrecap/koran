@@ -108,6 +108,37 @@ void main() {
     expect(notifier.state, isEmpty);
     expect(prefs.getString('librarySearchHistory'), isNull);
   });
+
+  test('normalizes loaded history entries and caps them to the newest 8',
+      () async {
+    SharedPreferences.setMockInitialValues(
+      <String, Object>{
+        'librarySearchHistory': jsonEncode(
+          const <String>[
+            '',
+            '  mercy  ',
+            'grace',
+            ' virtue ',
+            'mercy',
+            'a',
+            'b',
+            'c',
+            'd',
+            'e',
+          ],
+        ),
+      },
+    );
+    UserPreferences.resetCache();
+
+    final notifier = LibrarySearchHistoryNotifier();
+    await notifier.ready;
+
+    expect(
+      notifier.state,
+      const <String>['mercy', 'grace', 'virtue', 'mercy', 'a', 'b', 'c', 'd'],
+    );
+  });
 }
 
 class _FakeLibraryTranslationSearchSource

@@ -36,69 +36,73 @@ class StoryVerseCard extends ConsumerWidget {
           ),
         );
 
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        key: Key(
-            'story-verse-card-${verse.surah}-${verse.ayahStart}-${verse.ayahEnd}'),
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(24),
-        child: Ink(
-          decoration: BoxDecoration(
-            color: isDark ? AppColors.surfaceDarkNav : Colors.white,
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(
-              color: AppColors.gold.withValues(alpha: isDark ? 0.45 : 0.38),
-              width: 1.5,
-            ),
-            boxShadow: isDark
-                ? null
-                : [
-                    BoxShadow(
-                      color: AppColors.gold.withValues(alpha: 0.08),
-                      blurRadius: 20,
-                      offset: const Offset(0, 8),
-                    ),
-                  ],
+    return Tooltip(
+      message: context.l10n.storiesOpenInReader,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          key: Key(
+            'story-verse-card-${verse.surah}-${verse.ayahStart}-${verse.ayahEnd}',
           ),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(18, 18, 18, 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(
-                  verse.textAr,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontFamily: 'Amiri',
-                    fontSize: 25,
-                    height: 1.8,
-                    color: isDark ? AppColors.textDark : AppColors.textLight,
-                  ),
-                ),
-                const SizedBox(height: 14),
-                Text(
-                  referenceText,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.gold,
-                  ),
-                ),
-                if (verse.contextAr.trim().isNotEmpty) ...[
-                  const SizedBox(height: 10),
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(24),
+          child: Ink(
+            decoration: BoxDecoration(
+              color: isDark ? AppColors.surfaceDarkNav : Colors.white,
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(
+                color: AppColors.gold.withValues(alpha: isDark ? 0.45 : 0.38),
+                width: 1.5,
+              ),
+              boxShadow: isDark
+                  ? null
+                  : [
+                      BoxShadow(
+                        color: AppColors.gold.withValues(alpha: 0.08),
+                        blurRadius: 20,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(18, 18, 18, 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
                   Text(
-                    verse.contextAr,
+                    verse.textAr,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontFamily: 'Amiri',
+                      fontSize: 25,
+                      height: 1.8,
+                      color: isDark ? AppColors.textDark : AppColors.textLight,
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  Text(
+                    referenceText,
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                       fontSize: 13,
-                      height: 1.5,
-                      color: AppColors.textMuted,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.gold,
                     ),
                   ),
+                  if (verse.contextAr.trim().isNotEmpty) ...[
+                    const SizedBox(height: 10),
+                    Text(
+                      verse.contextAr,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 13,
+                        height: 1.5,
+                        color: AppColors.textMuted,
+                      ),
+                    ),
+                  ],
                 ],
-              ],
+              ),
             ),
           ),
         ),

@@ -143,8 +143,56 @@ class AppLocalizations {
       'audioDownloadsUnavailableMessage':
           'إدارة تنزيلات الصوت غير مدعومة على هذا الجهاز الآن.',
       'audioDownloadsActionFailed': 'تعذر تنفيذ هذا الإجراء الآن.',
-      'errorLoadingData': 'طھط¹ط°ط± طھط­ظ…ظٹظ„ ط§ظ„ط¨ظٹط§ظ†ط§طھ ط§ظ„ط¢ظ†.',
-      'errorRetry': 'ط¥ط¹ط§ط¯ط© ط§ظ„ظ…ط­ط§ظˆظ„ط©',
+      'errorLoadingData': 'تعذر تحميل البيانات الآن.',
+      'errorRetry': 'إعادة المحاولة',
+      'smartSearch': 'البحث الذكي',
+      'searchByTopic': 'بحث بالموضوع',
+      'searchingTopics': 'جارٍ البحث عن المواضيع...',
+      'noSmartResults': 'لم يتم العثور على آيات مطابقة لهذا الموضوع.',
+      'smartSearchHint': 'ابحث بمفهوم أو موضوع أو سؤال.',
+      'fallbackToKeyword': 'البحث الذكي غير متاح بدون اتصال. عرض نتائج الكلمات المفتاحية بدلاً من ذلك.',
+      'searchTopicPlaceholder': 'ابحث عن موضوع قرآني...',
+      'verseContext': 'سياق الآية',
+      'contextAndConnection': 'السياق والترابط',
+      'loadingContext': 'جارٍ تحميل السياق...',
+      'reflectionQuestions': 'أسئلة للتأمل',
+      'tadabburQuestions': 'أسئلة للتدبر',
+      'generatingQuestions': 'جارٍ توليد أسئلة التدبر...',
+      'simplifyTafsir': 'تبسيط التفسير',
+      'simplifying': 'جارٍ التبسيط...',
+      'simplifiedSummary': 'ملخص مبسط',
+      'tafsirAlreadyShort': 'هذا التفسير مختصر بالفعل.',
+      'aiFeatures': 'ميزات الذكاء الاصطناعي',
+      'aiPowered': 'مدعوم بالذكاء الاصطناعي',
+      'aiDisclaimer': 'ملخص تقني',
+      'aiDisclaimerFull': 'هذا ملخص تقني ولا يغني عن التفسير الكامل.',
+      'aiOffline': 'هذه الميزة تتطلب اتصالاً بالإنترنت.',
+      'aiTimeout': 'تعذر الحصول على استجابة في الوقت المناسب.',
+      'aiRetry': 'حاول مرة أخرى',
+      'aiUnavailable': 'الذكاء الاصطناعي غير متاح حالياً.',
+      'aiQuotaExhausted': 'لقد وصلت إلى حد الاستخدام المجاني اليوم. حاول غداً.',
+      'aiQuotaRemaining': 'المتبقي اليوم',
+      'aiQuotaFormat': '{remaining}/{total} متبقي اليوم',
+      'aiProviderError': 'حدث خطأ تقني. حاول مرة أخرى.',
+      'aiSafetyBlocked': 'تعذرت معالجة هذا الطلب بأمان.',
+      'aiQuotaRemainingFormat': '{remaining}/{total} متبقي اليوم',
+      'aiPremiumFeature': 'الذكاء الاصطناعي غير المحدود ميزة مميزة.',
+      'refusesFatwa': 'هذه الميزة لا تقدم فتاوى أو أحكام شرعية.',
+      'technicalSummary': 'ملخص تقني',
+      'referToScholar': 'يرجى الرجوع إلى عالم مؤهل للأحكام.',
+      'upgradeForUnlimitedAi': 'ترقية للحصول على طلبات ذكاء اصطناعي غير محدودة',
+      'storiesAddToFavorites': 'أضف إلى المفضلة',
+      'storiesRemoveFromFavorites': 'أزل من المفضلة',
+      'storiesNoFavorites': 'لا توجد قصص مفضلة بعد.',
+      'storiesNoStoriesFound': 'لم يتم العثور على قصص.',
+      'storiesReadingProgress': 'تقدم القراءة',
+      'storiesCompleted': 'مكتملة',
+      'storiesFavorites': 'المفضلة',
+      'storiesContinueReading': 'واصل القراءة',
+      'storiesReadNow': 'اقرأ الآن',
+      'storiesStartReading': 'ابدأ القراءة',
+      'storiesOpenInReader': 'افتح في القارئ',
+      'storiesShareUnavailable': 'تعذرت مشاركة هذا الفصل الآن.',
     },
     'en': {
       'appTitle': 'Quran Kareem',
@@ -854,6 +902,62 @@ class AppLocalizations {
           'Compass data is unavailable on this device right now.',
       'qiblaCompassNeedleHint':
           'Rotate the phone until the Qibla needle points up.',
+      'aiFeatures': 'AI Features',
+      'aiPowered': 'AI-powered',
+      'aiDisclaimer': 'Technical summary',
+      'aiDisclaimerFull':
+          'This is a technical summary and does not replace the full tafsir.',
+      'aiOffline': 'This feature requires an internet connection.',
+      'aiTimeout': 'We could not get a response in time.',
+      'aiRetry': 'Try again',
+      'aiUnavailable': 'AI is currently unavailable.',
+      'aiQuotaExhausted':
+          'You have reached today\'s free AI limit. Try again tomorrow.',
+      'aiQuotaRemaining': 'Remaining today',
+      'aiQuotaFormat': '{remaining}/{total} remaining today',
+      'aiProviderError': 'A technical error occurred. Please try again.',
+      'aiSafetyBlocked': 'We could not process this request safely.',
+      'aiQuotaRemainingFormat': '{remaining}/{total} remaining today',
+      'simplifyTafsir': 'Simplify tafsir',
+      'simplifying': 'Simplifying...',
+      'simplifiedSummary': 'Simplified summary',
+      'noTafsirToSimplify': 'No tafsir is available to simplify.',
+      'tafsirAlreadyShort': 'This tafsir is already brief.',
+      'simplifyError': 'We could not simplify this tafsir right now.',
+      'smartSearch': 'Smart Search',
+      'searchByTopic': 'Search by topic',
+      'searchingTopics': 'Searching related topics...',
+      'noSmartResults': 'No relevant verses were found for this topic.',
+      'smartSearchHint': 'Search by concept, theme, or question.',
+      'fallbackToKeyword':
+          'Smart search is unavailable offline. Showing keyword matches instead.',
+      'searchTopicPlaceholder': 'Search for a Quranic topic...',
+      'verseContext': 'Verse Context',
+      'contextAndConnection': 'Context and Connection',
+      'loadingContext': 'Loading context...',
+      'reflectionQuestions': 'Reflection Questions',
+      'tadabburQuestions': 'Tadabbur Questions',
+      'generatingQuestions': 'Generating reflection questions...',
+      'aiPremiumFeature': 'Unlimited AI is a premium feature.',
+      'refusesFatwa': 'This feature does not provide fatwas or legal rulings.',
+      'technicalSummary': 'Technical summary',
+      'referToScholar': 'Please refer to a qualified scholar for rulings.',
+      'juzSummary': 'Juz Summary',
+      'summarizeJuz': 'Summarize the juz',
+      'loadingSummary': 'Loading summary...',
+      'upgradeForUnlimitedAi': 'Upgrade for unlimited AI requests',
+      'storiesAddToFavorites': 'Add to favorites',
+      'storiesRemoveFromFavorites': 'Remove from favorites',
+      'storiesNoFavorites': 'No favorite stories yet.',
+      'storiesNoStoriesFound': 'No stories found.',
+      'storiesReadingProgress': 'Reading progress',
+      'storiesCompleted': 'Completed',
+      'storiesFavorites': 'Favorites',
+      'storiesContinueReading': 'Continue reading',
+      'storiesReadNow': 'Read now',
+      'storiesStartReading': 'Start reading',
+      'storiesOpenInReader': 'Open in reader',
+      'storiesShareUnavailable': 'Unable to share this chapter right now.',
     },
   };
 
@@ -2446,6 +2550,81 @@ class AppLocalizations {
   String get qiblaCompassSensorUnavailable =>
       _value('qiblaCompassSensorUnavailable');
   String get qiblaCompassNeedleHint => _value('qiblaCompassNeedleHint');
+
+  // ─── AI Features ───
+  String get aiFeatures => _value('aiFeatures');
+  String get aiPowered => _value('aiPowered');
+  String get aiDisclaimer => _value('aiDisclaimer');
+  String get aiDisclaimerFull => _value('aiDisclaimerFull');
+  String get aiOffline => _value('aiOffline');
+  String get aiTimeout => _value('aiTimeout');
+  String get aiRetry => _value('aiRetry');
+  String get aiUnavailable => _value('aiUnavailable');
+  String get aiQuotaExhausted => _value('aiQuotaExhausted');
+  String get aiQuotaRemaining => _value('aiQuotaRemaining');
+  String get aiProviderError => _value('aiProviderError');
+  String get aiSafetyBlocked => _value('aiSafetyBlocked');
+  String get aiPremiumFeature => _value('aiPremiumFeature');
+  String get refusesFatwa => _value('refusesFatwa');
+  String get technicalSummary => _value('technicalSummary');
+  String get referToScholar => _value('referToScholar');
+  String get upgradeForUnlimitedAi => _value('upgradeForUnlimitedAi');
+  String aiQuotaFormat(String remaining, String total) {
+    return _value('aiQuotaFormat')
+        .replaceAll('{remaining}', remaining)
+        .replaceAll('{total}', total);
+  }
+  String aiQuotaRemainingFormat(String remaining, String total) {
+    return _value('aiQuotaRemainingFormat')
+        .replaceAll('{remaining}', remaining)
+        .replaceAll('{total}', total);
+  }
+
+  // ─── AI: Simplify ───
+  String get simplifyTafsir => _value('simplifyTafsir');
+  String get simplifying => _value('simplifying');
+  String get simplifiedSummary => _value('simplifiedSummary');
+  String get noTafsirToSimplify => _value('noTafsirToSimplify');
+  String get tafsirAlreadyShort => _value('tafsirAlreadyShort');
+  String get simplifyError => _value('simplifyError');
+
+  // ─── AI: Smart Search ───
+  String get smartSearch => _value('smartSearch');
+  String get searchByTopic => _value('searchByTopic');
+  String get searchingTopics => _value('searchingTopics');
+  String get noSmartResults => _value('noSmartResults');
+  String get smartSearchHint => _value('smartSearchHint');
+  String get fallbackToKeyword => _value('fallbackToKeyword');
+  String get searchTopicPlaceholder => _value('searchTopicPlaceholder');
+
+  // ─── AI: Context ───
+  String get verseContext => _value('verseContext');
+  String get contextAndConnection => _value('contextAndConnection');
+  String get loadingContext => _value('loadingContext');
+
+  // ─── AI: Tadabbur ───
+  String get reflectionQuestions => _value('reflectionQuestions');
+  String get tadabburQuestions => _value('tadabburQuestions');
+  String get generatingQuestions => _value('generatingQuestions');
+
+  // ─── AI: Juz Summary ───
+  String get juzSummary => _value('juzSummary');
+  String get summarizeJuz => _value('summarizeJuz');
+  String get loadingSummary => _value('loadingSummary');
+
+  // ─── Stories extras ───
+  String get storiesAddToFavorites => _value('storiesAddToFavorites');
+  String get storiesRemoveFromFavorites => _value('storiesRemoveFromFavorites');
+  String get storiesNoFavorites => _value('storiesNoFavorites');
+  String get storiesNoStoriesFound => _value('storiesNoStoriesFound');
+  String get storiesReadingProgress => _value('storiesReadingProgress');
+  String get storiesCompleted => _value('storiesCompleted');
+  String get storiesFavorites => _value('storiesFavorites');
+  String get storiesContinueReading => _value('storiesContinueReading');
+  String get storiesReadNow => _value('storiesReadNow');
+  String get storiesStartReading => _value('storiesStartReading');
+  String get storiesOpenInReader => _value('storiesOpenInReader');
+  String get storiesShareUnavailable => _value('storiesShareUnavailable');
 }
 
 class _AppLocalizationsDelegate

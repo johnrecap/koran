@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -13,19 +12,21 @@ import 'package:quran_kareem/features/stories/domain/quran_story.dart';
 import 'package:quran_kareem/features/stories/domain/story_chapter.dart';
 import 'package:quran_kareem/features/stories/domain/story_reading_progress.dart';
 import 'package:quran_kareem/features/stories/domain/story_verse.dart';
+import 'package:quran_kareem/features/stories/presentation/shareable_story_card.dart';
 import 'package:quran_kareem/features/stories/presentation/story_chapter_nav.dart';
 import 'package:quran_kareem/features/stories/presentation/story_chapter_view.dart';
 import 'package:quran_kareem/features/stories/presentation/story_completion_view.dart';
 import 'package:quran_kareem/features/stories/providers/story_providers.dart';
 
 class StoryReaderScreen extends ConsumerStatefulWidget {
-  const StoryReaderScreen({
+  StoryReaderScreen({
     super.key,
     required this.storyId,
     this.onVersePressed,
     this.onBackToHub,
     this.onSharePressed,
-  });
+    StoryCardImageExporter? imageExporter,
+  }) : imageExporter = imageExporter ?? StoryCardImageExporter();
 
   final String storyId;
   final Future<void> Function(
@@ -35,6 +36,7 @@ class StoryReaderScreen extends ConsumerStatefulWidget {
   )? onVersePressed;
   final VoidCallback? onBackToHub;
   final VoidCallback? onSharePressed;
+  final StoryCardImageExporter imageExporter;
 
   @override
   ConsumerState<StoryReaderScreen> createState() => _StoryReaderScreenState();
@@ -45,13 +47,75 @@ class _StoryReaderScreenState extends ConsumerState<StoryReaderScreen> {
   Timer? _progressDebounce;
   String? _initializedStoryId;
   bool _isInitializingStory = false;
+  bool _isSharing = false;
   int _currentPageIndex = 0;
+  final GlobalKey _shareCardKey = GlobalKey();
+  QuranStory? _currentStoryForShare;
 
   @override
   void dispose() {
     _progressDebounce?.cancel();
     _pageController?.dispose();
     super.dispose();
+  }
+
+  Future<void> _handleShare() async {
+    final callback = widget.onSharePressed;
+    if (callback != null) {
+      callback();
+      return;
+    }
+
+    final story = _currentStoryForShare;
+    if (story == null || _isSharing) {
+      return;
+    }
+
+    final chapters = _sortedChapters(story);
+    if (_currentPageIndex < 0 || _currentPageIndex >= chapters.length) {
+      return;
+    }
+
+    setState(() {
+      _isSharing = true;
+    });
+
+    try {
+      await Future<void>.delayed(Duration.zero);
+      final pngBytes = await widget.imageExporter.captureCard(_shareCardKey);
+      if (!mounted) {
+        return;
+      }
+
+      if (pngBytes == null) {
+        _showShareFailure();
+        return;
+      }
+
+      final didShare = await widget.imageExporter.shareImage(
+        pngBytes,
+        '${story.id}-${chapters[_currentPageIndex].id}',
+      );
+      if (!mounted) {
+        return;
+      }
+
+      if (!didShare) {
+        _showShareFailure();
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSharing = false;
+        });
+      }
+    }
+  }
+
+  void _showShareFailure() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(context.l10n.storiesShareUnavailable)),
+    );
   }
 
   @override
@@ -77,25 +141,41 @@ class _StoryReaderScreenState extends ConsumerState<StoryReaderScreen> {
         actions: storyMeta == null
             ? null
             : [
-                IconButton(
-                  key: const Key('story-reader-bookmark-toggle'),
-                  onPressed: () {
-                    unawaited(
-                      ref
-                          .read(storyBookmarkNotifierProvider.notifier)
-                          .toggle(widget.storyId),
-                    );
-                  },
-                  icon: Icon(
-                    isBookmarked
-                        ? Icons.favorite_rounded
-                        : Icons.favorite_border_rounded,
-                    color: isBookmarked ? AppColors.gold : null,
+                AnimatedScale(
+                  scale: isBookmarked ? 1 : 0.92,
+                  duration: const Duration(milliseconds: 220),
+                  curve: Curves.easeOutBack,
+                  child: IconButton(
+                    key: const Key('story-reader-bookmark-toggle'),
+                    tooltip: isBookmarked
+                        ? context.l10n.storiesRemoveFromFavorites
+                        : context.l10n.storiesAddToFavorites,
+                    onPressed: () {
+                      unawaited(
+                        ref
+                            .read(storyBookmarkNotifierProvider.notifier)
+                            .toggle(widget.storyId),
+                      );
+                    },
+                    icon: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 220),
+                      transitionBuilder: (child, animation) {
+                        return ScaleTransition(scale: animation, child: child);
+                      },
+                      child: Icon(
+                        isBookmarked
+                            ? Icons.favorite_rounded
+                            : Icons.favorite_border_rounded,
+                        key: ValueKey<bool>(isBookmarked),
+                        color: isBookmarked ? AppColors.gold : null,
+                      ),
+                    ),
                   ),
                 ),
                 IconButton(
                   key: const Key('story-reader-share'),
-                  onPressed: widget.onSharePressed,
+                  tooltip: context.l10n.storiesShareChapter,
+                  onPressed: _isSharing ? null : _handleShare,
                   icon: const Icon(Icons.ios_share_rounded),
                 ),
               ],
@@ -142,6 +222,8 @@ class _StoryReaderScreenState extends ConsumerState<StoryReaderScreen> {
   }
 
   Widget _buildStoryContent(BuildContext context, QuranStory story) {
+    _currentStoryForShare = story;
+
     final chapters = _sortedChapters(story);
     if (chapters.isEmpty) {
       return AppErrorWidget(message: context.l10n.errorLoadingData);
@@ -156,53 +238,74 @@ class _StoryReaderScreenState extends ConsumerState<StoryReaderScreen> {
 
     final isCompletionPage = _currentPageIndex >= chapters.length;
 
-    return Column(
+    return Stack(
       children: [
-        Expanded(
-          child: PageView.builder(
-            key: const Key('story-reader-page-view'),
-            controller: pageController,
-            itemCount: chapters.length + 1,
-            onPageChanged: (page) => _handlePageChanged(story, page),
-            itemBuilder: (context, index) {
-              if (index >= chapters.length) {
-                return StoryCompletionView(
-                  story: story,
-                  onMarkAsRead: () {
-                    unawaited(
-                      ref
-                          .read(storyProgressNotifierProvider.notifier)
-                          .markCompleted(story.id),
+        Column(
+          children: [
+            Expanded(
+              child: PageView.builder(
+                key: const Key('story-reader-page-view'),
+                controller: pageController,
+                itemCount: chapters.length + 1,
+                onPageChanged: (page) => _handlePageChanged(story, page),
+                itemBuilder: (context, index) {
+                  if (index >= chapters.length) {
+                    return StoryCompletionView(
+                      story: story,
+                      onMarkAsRead: () {
+                        unawaited(
+                          ref
+                              .read(storyProgressNotifierProvider.notifier)
+                              .markCompleted(story.id),
+                        );
+                      },
+                      onBackToHub: _handleBackToHub,
                     );
-                  },
-                  onBackToHub: _handleBackToHub,
-                );
-              }
+                  }
 
-              final chapter = chapters[index];
-              return StoryChapterView(
-                key: ValueKey('${story.id}-${chapter.id}-$index'),
-                chapter: chapter,
-                onVersePressed: (verse) {
-                  unawaited(_handleVersePressed(verse));
+                  final chapter = chapters[index];
+                  return StoryChapterView(
+                    key: ValueKey('${story.id}-${chapter.id}-$index'),
+                    chapter: chapter,
+                    onVersePressed: (verse) {
+                      unawaited(_handleVersePressed(verse));
+                    },
+                  );
                 },
-              );
-            },
+              ),
+            ),
+            if (!isCompletionPage)
+              StoryChapterNav(
+                currentChapterIndex: _currentPageIndex,
+                totalChapters: chapters.length,
+                onPrevious: _currentPageIndex <= 0
+                    ? null
+                    : () => _animateToPage(_currentPageIndex - 1),
+                onNext: _currentPageIndex >= chapters.length
+                    ? null
+                    : () => _animateToPage(
+                          (_currentPageIndex + 1).clamp(0, chapters.length),
+                        ),
+              ),
+          ],
+        ),
+        PositionedDirectional(
+          start: -10000,
+          top: 0,
+          child: IgnorePointer(
+            child: RepaintBoundary(
+              key: _shareCardKey,
+              child: SizedBox(
+                width: 380,
+                child: ShareableStoryCard(
+                  story: story,
+                  chapter:
+                      chapters[_currentPageIndex.clamp(0, chapters.length - 1)],
+                ),
+              ),
+            ),
           ),
         ),
-        if (!isCompletionPage)
-          StoryChapterNav(
-            currentChapterIndex: _currentPageIndex,
-            totalChapters: chapters.length,
-            onPrevious: _currentPageIndex <= 0
-                ? null
-                : () => _animateToPage(_currentPageIndex - 1),
-            onNext: _currentPageIndex >= chapters.length
-                ? null
-                : () => _animateToPage(
-                      (_currentPageIndex + 1).clamp(0, chapters.length),
-                    ),
-          ),
       ],
     );
   }

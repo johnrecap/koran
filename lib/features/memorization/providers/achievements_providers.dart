@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:quran_kareem/core/constants/storage_keys.dart';
 import 'package:quran_kareem/core/utils/app_logger.dart';
 import 'package:quran_kareem/data/datasources/local/user_preferences.dart';
 import 'package:quran_kareem/features/memorization/domain/achievement_dashboard_summary.dart';
@@ -49,7 +50,7 @@ class AchievementsAcknowledgementsNotifier extends StateNotifier<Set<String>> {
     _ready = _load();
   }
 
-  static const String _storageKey = 'achievementAcknowledgements';
+  static const String _storageKey = StorageKeys.achievementAcknowledgements;
 
   late final Future<void> _ready;
 

@@ -290,6 +290,13 @@ class QuranDatabase {
     return 1;
   }
 
+  static Ayah enrichAyahWithCanonicalMetadata(Ayah ayah) {
+    return QuranMetadataLookup.enrichDomainAyah(
+      ayah,
+      _canonicalSurahs,
+    );
+  }
+
   static Future<void> _ensureSchemaDetected({Database? databaseInstance}) async {
     if (_surahTableName != null && _ayahTableName != null) {
       return;

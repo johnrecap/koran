@@ -16,6 +16,7 @@ class PremiumEntitlementSnapshot {
       : billingAvailable = true,
         _grantedAccesses = const <PremiumAccessKey>{
           PremiumAccessKey.ayahShareCardsPremiumTemplates,
+          PremiumAccessKey.aiFeatures,
         };
 
   const PremiumEntitlementSnapshot.unavailable()

@@ -58,5 +58,21 @@ void main() {
       expect(notifier.isBookmarked('adam'), isFalse);
       expect(repository.loadAll(), isEmpty);
     });
+
+    test('toggle only persists the changed story id after bootstrap', () async {
+      final toggledIds = <String>[];
+      final notifier = StoryBookmarkNotifier(
+        loadBookmarks: () async => <String>{'musa', 'adam'},
+        toggleBookmark: (storyId) async {
+          toggledIds.add(storyId);
+        },
+      );
+
+      await notifier.ready;
+      await notifier.toggle('adam');
+
+      expect(notifier.state, <String>{'musa'});
+      expect(toggledIds, <String>['adam']);
+    });
   });
 }

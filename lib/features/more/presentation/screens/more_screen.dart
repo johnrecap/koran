@@ -5,7 +5,7 @@ import 'package:quran_kareem/core/constants/app_colors.dart';
 import 'package:quran_kareem/core/localization/app_localizations.dart';
 import 'package:quran_kareem/features/more/providers/more_providers.dart';
 import 'package:quran_kareem/features/more/presentation/widgets/home_tools_icon_grid.dart';
-import 'package:quran_kareem/features/more/presentation/widgets/prayer_times_hero_card.dart';
+import 'package:quran_kareem/features/prayer/presentation/widgets/prayer_times_hero_card.dart';
 import 'package:quran_kareem/features/reader/presentation/widgets/torn_paper_banner.dart';
 
 class MoreScreen extends ConsumerStatefulWidget {

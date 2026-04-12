@@ -7,6 +7,7 @@ import 'package:quran_kareem/core/constants/app_colors.dart';
 import 'package:quran_kareem/core/localization/app_localizations.dart';
 import 'package:quran_kareem/data/datasources/local/quran_database.dart';
 import 'package:quran_kareem/domain/entities/quran_entities.dart';
+import 'package:quran_kareem/features/ai/providers/ai_providers.dart';
 import 'package:quran_kareem/features/library/presentation/widgets/library_ayah_search_result_tile.dart';
 import 'package:quran_kareem/features/library/presentation/widgets/library_topic_card.dart';
 import 'package:quran_kareem/features/library/presentation/widgets/library_translation_search_result_tile.dart';
@@ -69,6 +70,10 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
 
   void _openStoriesHub() {
     context.push('/library/stories');
+  }
+
+  void _openAiSearch() {
+    context.push('/library/ai-search');
   }
 
   void _openReaderForSurah(Surah surah) {
@@ -183,6 +188,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
     final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
+
     return Scaffold(
       backgroundColor: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
       body: NestedScrollView(
@@ -231,6 +237,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
 
   Widget _buildSurahsTab(BuildContext context, bool isDark) {
     final l10n = context.l10n;
+    final aiAvailable = ref.watch(aiAvailableProvider);
     final query = ref.watch(librarySearchQueryProvider).trim();
     final searchKind = ref.watch(librarySearchKindProvider);
     final searchScope = ref.watch(librarySearchScopeProvider);
@@ -249,32 +256,66 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
       children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
-          child: OutlinedButton.icon(
-            key: const Key('library-stories-entry'),
-            onPressed: _openStoriesHub,
-            icon: const Icon(
-              Icons.auto_stories_rounded,
-              color: AppColors.gold,
-            ),
-            label: Text(
-              l10n.quranStories,
-              style: const TextStyle(
-                fontFamily: 'Amiri',
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-                color: AppColors.gold,
+          child: Column(
+            children: [
+              OutlinedButton.icon(
+                key: const Key('library-stories-entry'),
+                onPressed: _openStoriesHub,
+                icon: const Icon(
+                  Icons.auto_stories_rounded,
+                  color: AppColors.gold,
+                ),
+                label: Text(
+                  l10n.quranStories,
+                  style: const TextStyle(
+                    fontFamily: 'Amiri',
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.gold,
+                  ),
+                ),
+                style: OutlinedButton.styleFrom(
+                  minimumSize: const Size.fromHeight(56),
+                  side: BorderSide(
+                    color: AppColors.gold.withValues(alpha: 0.6),
+                    width: 1.5,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                ),
               ),
-            ),
-            style: OutlinedButton.styleFrom(
-              minimumSize: const Size.fromHeight(56),
-              side: BorderSide(
-                color: AppColors.gold.withValues(alpha: 0.6),
-                width: 1.5,
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(18),
-              ),
-            ),
+              if (aiAvailable) ...[
+                const SizedBox(height: 10),
+                OutlinedButton.icon(
+                  key: const Key('library-ai-search-entry'),
+                  onPressed: _openAiSearch,
+                  icon: const Icon(
+                    Icons.auto_awesome_rounded,
+                    color: AppColors.gold,
+                  ),
+                  label: Text(
+                    l10n.smartSearch,
+                    style: const TextStyle(
+                      fontFamily: 'Amiri',
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.gold,
+                    ),
+                  ),
+                  style: OutlinedButton.styleFrom(
+                    minimumSize: const Size.fromHeight(56),
+                    side: BorderSide(
+                      color: AppColors.gold.withValues(alpha: 0.6),
+                      width: 1.5,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(18),
+                    ),
+                  ),
+                ),
+              ],
+            ],
           ),
         ),
         Padding(

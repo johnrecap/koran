@@ -3,8 +3,8 @@ import 'package:quran_kareem/features/memorization/data/reading_session.dart';
 import 'package:quran_kareem/features/memorization/data/spaced_review_item.dart';
 import 'package:quran_kareem/features/memorization/domain/achievement_snapshot.dart';
 import 'package:quran_kareem/features/memorization/domain/khatma_planner_summary.dart';
-import 'package:quran_kareem/features/more/domain/prayer_day_tracking.dart';
-import 'package:quran_kareem/features/more/domain/prayer_time_models.dart';
+import 'package:quran_kareem/features/prayer/domain/prayer_day_tracking.dart';
+import 'package:quran_kareem/features/prayer/domain/prayer_time_models.dart';
 
 abstract final class AnalyticsPeriodPolicy {
   static AnalyticsPeriodSnapshot build({

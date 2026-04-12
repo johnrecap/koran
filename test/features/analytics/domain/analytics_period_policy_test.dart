@@ -4,8 +4,8 @@ import 'package:quran_kareem/features/analytics/domain/analytics_period_snapshot
 import 'package:quran_kareem/features/memorization/data/reading_session.dart';
 import 'package:quran_kareem/features/memorization/data/spaced_review_item.dart';
 import 'package:quran_kareem/features/memorization/domain/achievement_snapshot.dart';
-import 'package:quran_kareem/features/more/domain/prayer_day_tracking.dart';
-import 'package:quran_kareem/features/more/domain/prayer_time_models.dart';
+import 'package:quran_kareem/features/prayer/domain/prayer_day_tracking.dart';
+import 'package:quran_kareem/features/prayer/domain/prayer_time_models.dart';
 
 void main() {
   final weekRange = AnalyticsDateRange(

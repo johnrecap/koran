@@ -45,10 +45,15 @@ final filteredStoriesProvider = Provider<List<QuranStory>>((ref) {
         orElse: () => const <QuranStory>[],
       );
   final filter = ref.watch(storyFilterProvider);
+  final bookmarks = ref.watch(storyBookmarkNotifierProvider);
   final normalizedQuery = filter.searchQuery.trim().toLowerCase();
 
   final filtered = stories.where((story) {
     if (filter.category != null && story.category != filter.category) {
+      return false;
+    }
+
+    if (filter.showFavorites && !bookmarks.contains(story.id)) {
       return false;
     }
 
@@ -84,19 +89,23 @@ class StoryFilter {
   const StoryFilter({
     this.category,
     this.searchQuery = '',
+    this.showFavorites = false,
   });
 
   final StoryCategory? category;
   final String searchQuery;
+  final bool showFavorites;
 
   StoryFilter copyWith({
     StoryCategory? category,
     bool clearCategory = false,
     String? searchQuery,
+    bool? showFavorites,
   }) {
     return StoryFilter(
       category: clearCategory ? null : (category ?? this.category),
       searchQuery: searchQuery ?? this.searchQuery,
+      showFavorites: showFavorites ?? this.showFavorites,
     );
   }
 }

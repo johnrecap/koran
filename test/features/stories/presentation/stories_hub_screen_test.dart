@@ -99,6 +99,53 @@ void main() {
     expect(find.byKey(const Key('story-card-yusuf')), findsNothing);
     expect(find.byKey(const Key('story-card-nuh')), findsNothing);
   });
+
+  testWidgets('favorites filter shows only bookmarked stories', (tester) async {
+    await tester.pumpWidget(
+      _buildHarness(
+        overrides: [
+          storyIndexProvider.overrideWith((ref) async => _stories),
+          storyBookmarkNotifierProvider.overrideWith(
+            (ref) => StoryBookmarkNotifier(
+              loadBookmarks: () async => <String>{'maryam'},
+              toggleBookmark: (_) async {},
+            ),
+          ),
+        ],
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const Key('story-category-tab-favorites')));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('story-card-maryam')), findsOneWidget);
+    expect(find.byKey(const Key('story-card-yusuf')), findsNothing);
+    expect(find.byKey(const Key('story-card-nuh')), findsNothing);
+  });
+
+  testWidgets('favorites empty state uses localized favorites copy',
+      (tester) async {
+    await tester.pumpWidget(
+      _buildHarness(
+        overrides: [
+          storyIndexProvider.overrideWith((ref) async => _stories),
+          storyFilterProvider.overrideWith(
+            (ref) => const StoryFilter(showFavorites: true),
+          ),
+          storyBookmarkNotifierProvider.overrideWith(
+            (ref) => StoryBookmarkNotifier(
+              loadBookmarks: () async => const <String>{},
+              toggleBookmark: (_) async {},
+            ),
+          ),
+        ],
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('No favorite stories yet.'), findsOneWidget);
+  });
 }
 
 Widget _buildHarness({

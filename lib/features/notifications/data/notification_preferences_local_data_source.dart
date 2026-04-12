@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:quran_kareem/core/constants/storage_keys.dart';
 import 'package:quran_kareem/core/utils/app_logger.dart';
 import 'package:quran_kareem/data/datasources/local/user_preferences.dart';
 import 'package:quran_kareem/features/notifications/domain/notification_preferences.dart';
@@ -12,7 +13,7 @@ abstract class NotificationPreferencesLocalDataSource {
 
 class SharedPreferencesNotificationPreferencesLocalDataSource
     implements NotificationPreferencesLocalDataSource {
-  static const String _storageKey = 'notificationPreferences';
+  static const String _storageKey = StorageKeys.notificationPreferences;
 
   @override
   Future<NotificationPreferences> load() async {

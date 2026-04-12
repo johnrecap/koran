@@ -5,6 +5,7 @@ import '../../features/audio/presentation/screens/audio_hub_screen.dart';
 import '../../features/audio/presentation/screens/audio_download_manager_screen.dart';
 import '../../features/audio/presentation/screens/audio_reciter_downloads_screen.dart';
 import '../../features/analytics/presentation/screens/analytics_dashboard_screen.dart';
+import '../../features/ai/features/search/ai_topic_search_screen.dart';
 import '../../features/library/presentation/screens/library_screen.dart';
 import '../../features/memorization/presentation/screens/memorization_screen.dart';
 import '../../features/memorization/presentation/screens/achievements_dashboard_screen.dart';
@@ -12,11 +13,11 @@ import '../../features/memorization/presentation/screens/khatma_planner_screen.d
 import '../../features/memorization/presentation/screens/review_queue_screen.dart';
 import '../../features/memorization/presentation/screens/review_session_screen.dart';
 import '../../features/more/presentation/screens/more_screen.dart';
-import '../../features/more/presentation/screens/adhkar_categories_screen.dart';
-import '../../features/more/presentation/screens/adhkar_category_detail_screen.dart';
-import '../../features/more/presentation/screens/prayer_times_details_screen.dart';
-import '../../features/more/presentation/screens/qibla_compass_screen.dart';
-import '../../features/more/domain/prayer_time_models.dart';
+import '../../features/adhkar/presentation/screens/adhkar_categories_screen.dart';
+import '../../features/adhkar/presentation/screens/adhkar_category_detail_screen.dart';
+import '../../features/prayer/presentation/screens/prayer_times_details_screen.dart';
+import '../../features/qibla/presentation/screens/qibla_compass_screen.dart';
+import '../../features/prayer/domain/prayer_time_models.dart';
 import '../../features/notifications/presentation/screens/notification_settings_screen.dart';
 import '../../features/onboarding/presentation/screens/cinematic_onboarding_screen.dart';
 import '../../features/onboarding/presentation/screens/mushaf_setup_screen.dart';
@@ -117,6 +118,13 @@ GoRouter createAppRouter({
             pageBuilder: (context, state) => AppTransitionPage<void>(
               key: state.pageKey,
               child: const StoriesHubScreen(),
+            ),
+          ),
+          GoRoute(
+            path: '/library/ai-search',
+            pageBuilder: (context, state) => AppTransitionPage<void>(
+              key: state.pageKey,
+              child: const AiTopicSearchScreen(),
             ),
           ),
           GoRoute(

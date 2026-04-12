@@ -1,3 +1,6 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -8,6 +11,7 @@ import 'package:quran_kareem/features/stories/domain/story_category.dart';
 import 'package:quran_kareem/features/stories/domain/story_chapter.dart';
 import 'package:quran_kareem/features/stories/domain/story_reading_progress.dart';
 import 'package:quran_kareem/features/stories/domain/story_verse.dart';
+import 'package:quran_kareem/features/stories/presentation/shareable_story_card.dart';
 import 'package:quran_kareem/features/stories/presentation/story_reader_screen.dart';
 import 'package:quran_kareem/features/stories/providers/story_bookmark_notifier.dart';
 import 'package:quran_kareem/features/stories/providers/story_progress_notifier.dart';
@@ -21,7 +25,7 @@ void main() {
     await tester.pumpWidget(
       _buildHarness(
         container: container,
-        child: const StoryReaderScreen(storyId: 'adam'),
+        child: StoryReaderScreen(storyId: 'adam'),
       ),
     );
     await _pumpReaderFrame(tester);
@@ -47,7 +51,7 @@ void main() {
     await tester.pumpWidget(
       _buildHarness(
         container: container,
-        child: const StoryReaderScreen(storyId: 'adam'),
+        child: StoryReaderScreen(storyId: 'adam'),
       ),
     );
     await _pumpReaderFrame(tester);
@@ -64,7 +68,7 @@ void main() {
     await tester.pumpWidget(
       _buildHarness(
         container: container,
-        child: const StoryReaderScreen(storyId: 'adam'),
+        child: StoryReaderScreen(storyId: 'adam'),
       ),
     );
     await _pumpReaderFrame(tester);
@@ -102,11 +106,100 @@ void main() {
     expect(find.text('The Beginning'), findsOneWidget);
     expect(find.text('Reader route'), findsNothing);
   });
+
+  testWidgets('bookmark toggle updates the icon state', (tester) async {
+    final toggledIds = <String>[];
+    final container = _createContainer(toggledIds: toggledIds);
+    addTearDown(container.dispose);
+
+    await tester.pumpWidget(
+      _buildHarness(
+        container: container,
+        child: StoryReaderScreen(storyId: 'adam'),
+      ),
+    );
+    await _pumpReaderFrame(tester);
+
+    expect(find.byTooltip('Add to favorites'), findsOneWidget);
+    expect(find.byIcon(Icons.favorite_border_rounded), findsOneWidget);
+
+    await tester.tap(find.byKey(const Key('story-reader-bookmark-toggle')));
+    await tester.pumpAndSettle();
+
+    expect(toggledIds, <String>['adam']);
+    expect(find.byTooltip('Remove from favorites'), findsOneWidget);
+    expect(find.byIcon(Icons.favorite_rounded), findsOneWidget);
+    expect(find.byIcon(Icons.favorite_border_rounded), findsNothing);
+  });
+
+  testWidgets('share button captures the card and forwards it to share',
+      (tester) async {
+    final container = _createContainer();
+    addTearDown(container.dispose);
+
+    var shared = false;
+    var captured = false;
+    final exporter = StoryCardImageExporter(
+      tempDirectoryProvider: () async => Directory.systemTemp.createTempSync(),
+      boundaryCapture: (_, __) async {
+        captured = true;
+        return Uint8List.fromList(<int>[1, 2, 3]);
+      },
+      shareInvoker: (_) async {
+        shared = true;
+      },
+    );
+
+    await tester.pumpWidget(
+      _buildHarness(
+        container: container,
+        child: StoryReaderScreen(
+          storyId: 'adam',
+          imageExporter: exporter,
+        ),
+      ),
+    );
+    await _pumpReaderFrame(tester);
+
+    await tester.tap(find.byKey(const Key('story-reader-share')));
+    await tester.pumpAndSettle();
+
+    expect(captured, isTrue);
+    expect(shared, isTrue);
+  });
+
+  testWidgets('share failure uses localized snackbar copy', (tester) async {
+    final container = _createContainer();
+    addTearDown(container.dispose);
+
+    final exporter = StoryCardImageExporter(
+      boundaryCapture: (_, __) async => throw StateError('capture failed'),
+      shareInvoker: (_) async {},
+      tempDirectoryProvider: () async => Directory.systemTemp.createTempSync(),
+    );
+
+    await tester.pumpWidget(
+      _buildHarness(
+        container: container,
+        child: StoryReaderScreen(
+          storyId: 'adam',
+          imageExporter: exporter,
+        ),
+      ),
+    );
+    await _pumpReaderFrame(tester);
+
+    await tester.tap(find.byKey(const Key('story-reader-share')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Unable to share this chapter right now.'), findsOneWidget);
+  });
 }
 
 ProviderContainer _createContainer({
   Map<String, StoryReadingProgress> progressByStory =
       const <String, StoryReadingProgress>{},
+  List<String>? toggledIds,
 }) {
   return ProviderContainer(
     overrides: [
@@ -121,7 +214,9 @@ ProviderContainer _createContainer({
       storyBookmarkNotifierProvider.overrideWith(
         (ref) => StoryBookmarkNotifier(
           loadBookmarks: () async => const <String>{},
-          toggleBookmark: (_) async {},
+          toggleBookmark: (storyId) async {
+            toggledIds?.add(storyId);
+          },
         ),
       ),
     ],

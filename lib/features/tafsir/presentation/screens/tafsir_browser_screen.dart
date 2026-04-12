@@ -157,6 +157,7 @@ class TafsirBrowserScreen extends ConsumerWidget {
               data: value,
               child: buildInsightSectionChild(
                 context: context,
+                target: target,
                 config: config,
                 data: value,
                 onNavigateToAyah: (surah, ayah) =>

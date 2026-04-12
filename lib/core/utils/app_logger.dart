@@ -1,4 +1,7 @@
+import 'dart:async';
 import 'dart:developer' as dev;
+
+import 'package:quran_kareem/core/services/error_reporting_service.dart';
 
 /// Centralized application logger.
 ///
@@ -17,12 +20,24 @@ class AppLogger {
     Object error, [
     StackTrace? stackTrace,
   ]) {
-    dev.log(
-      '[$context] $error',
-      name: 'QuranKareem',
-      error: error,
-      stackTrace: stackTrace,
-      level: 1000, // SEVERE
+    _logError(
+      context,
+      error,
+      stackTrace,
+      fatal: false,
+    );
+  }
+
+  static void fatal(
+    String context,
+    Object error, [
+    StackTrace? stackTrace,
+  ]) {
+    _logError(
+      context,
+      error,
+      stackTrace,
+      fatal: true,
     );
   }
 
@@ -41,6 +56,31 @@ class AppLogger {
       '[$context] $message',
       name: 'QuranKareem',
       level: 800, // INFO
+    );
+  }
+
+  static void _logError(
+    String context,
+    Object error,
+    StackTrace? stackTrace, {
+    required bool fatal,
+  }) {
+    dev.log(
+      '[$context] $error',
+      name: 'QuranKareem',
+      error: error,
+      stackTrace: stackTrace,
+      level: 1000, // SEVERE
+    );
+    unawaited(
+      ErrorReporting.report(
+        ErrorReport(
+          context: context,
+          error: error,
+          stackTrace: stackTrace,
+          fatal: fatal,
+        ),
+      ),
     );
   }
 }

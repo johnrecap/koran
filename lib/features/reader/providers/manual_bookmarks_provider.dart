@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:quran_kareem/core/constants/storage_keys.dart';
+import 'package:quran_kareem/core/providers/persistent_state_notifier.dart';
 import 'package:quran_kareem/core/utils/app_logger.dart';
 import 'package:quran_kareem/data/datasources/local/user_preferences.dart';
 
@@ -48,33 +50,41 @@ typedef ManualBookmarksSaver = Future<void> Function(
   List<ManualBookmark> bookmarks,
 );
 
-class ManualBookmarksNotifier extends StateNotifier<List<ManualBookmark>> {
+class ManualBookmarksNotifier
+    extends PersistentStateNotifier<List<ManualBookmark>> {
+  static const int _maxBookmarks = 200;
+
   ManualBookmarksNotifier({
     ManualBookmarksLoader? loadBookmarks,
     ManualBookmarksSaver? saveBookmarks,
   })  : _loadBookmarks = loadBookmarks ?? _defaultLoadBookmarks,
         _saveBookmarks = saveBookmarks ?? _defaultSaveBookmarks,
-        super([]) {
-    _ready = _load();
-  }
+        super(const <ManualBookmark>[]);
 
   final ManualBookmarksLoader _loadBookmarks;
   final ManualBookmarksSaver _saveBookmarks;
-  late final Future<void> _ready;
 
-  Future<void> get ready => _ready;
-
-  Future<void> _load() async {
-    state = await _loadBookmarks();
+  @override
+  Future<List<ManualBookmark>> loadPersistedState() async {
+    return _loadBookmarks();
   }
 
-  Future<void> _save() async {
-    await _saveBookmarks(state);
+  @override
+  List<ManualBookmark> normalizeState(List<ManualBookmark> state) {
+    return _trimBookmarks(state);
+  }
+
+  @override
+  Future<void> persistState(
+    List<ManualBookmark> previousState,
+    List<ManualBookmark> currentState,
+  ) {
+    return _saveBookmarks(currentState);
   }
 
   static Future<List<ManualBookmark>> _defaultLoadBookmarks() async {
     final prefs = await UserPreferences.prefs;
-    final json = prefs.getString('manualBookmarks');
+    final json = prefs.getString(StorageKeys.manualBookmarks);
     if (json == null) {
       return const <ManualBookmark>[];
     }
@@ -100,7 +110,7 @@ class ManualBookmarksNotifier extends StateNotifier<List<ManualBookmark>> {
   ) async {
     final prefs = await UserPreferences.prefs;
     await prefs.setString(
-      'manualBookmarks',
+      StorageKeys.manualBookmarks,
       jsonEncode(bookmarks.map((bookmark) => bookmark.toMap()).toList()),
     );
   }
@@ -120,27 +130,37 @@ class ManualBookmarksNotifier extends StateNotifier<List<ManualBookmark>> {
     int ayahNumber,
     String surahName,
   ) async {
-    await _ready;
+    await updateState((current) {
+      final exists = current.any(
+        (bookmark) =>
+            bookmark.surahNumber == surahNumber &&
+            bookmark.ayahNumber == ayahNumber,
+      );
 
-    final exists = isBookmarked(surahNumber, ayahNumber);
-    if (exists) {
-      state = state
-          .where((bookmark) =>
-              !(bookmark.surahNumber == surahNumber &&
-                  bookmark.ayahNumber == ayahNumber))
-          .toList();
-    } else {
-      state = [
+      if (exists) {
+        return current
+            .where((bookmark) => !(bookmark.surahNumber == surahNumber &&
+                bookmark.ayahNumber == ayahNumber))
+            .toList();
+      }
+
+      return [
         ManualBookmark(
           surahNumber: surahNumber,
           ayahNumber: ayahNumber,
           surahName: surahName,
           timestamp: DateTime.now(),
         ),
-        ...state,
+        ...current,
       ];
+    });
+  }
+
+  List<ManualBookmark> _trimBookmarks(List<ManualBookmark> bookmarks) {
+    if (bookmarks.length <= _maxBookmarks) {
+      return bookmarks;
     }
 
-    await _save();
+    return bookmarks.take(_maxBookmarks).toList(growable: false);
   }
 }

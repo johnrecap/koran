@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:quran_kareem/data/datasources/local/user_preferences.dart';
-import 'package:quran_kareem/features/more/domain/prayer_time_models.dart';
+import 'package:quran_kareem/features/prayer/domain/prayer_time_models.dart';
 import 'package:quran_kareem/features/notifications/data/notification_preferences_local_data_source.dart';
 import 'package:quran_kareem/features/notifications/domain/notification_preferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';

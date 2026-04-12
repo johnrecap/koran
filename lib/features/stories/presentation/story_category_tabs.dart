@@ -11,6 +11,8 @@ class StoryCategoryTabs extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final filter = ref.watch(storyFilterProvider);
+    final bookmarks = ref.watch(storyBookmarkNotifierProvider);
+    final hasBookmarks = bookmarks.isNotEmpty;
 
     return Wrap(
       spacing: 8,
@@ -19,12 +21,27 @@ class StoryCategoryTabs extends ConsumerWidget {
         _StoryCategoryChip(
           key: const Key('story-category-tab-all'),
           label: context.l10n.storiesAll,
-          selected: filter.category == null,
+          selected: filter.category == null && !filter.showFavorites,
           onSelected: () {
             ref.read(storyFilterProvider.notifier).state = filter.copyWith(
               clearCategory: true,
+              showFavorites: false,
             );
           },
+        ),
+        _StoryCategoryChip(
+          key: const Key('story-category-tab-favorites'),
+          label: context.l10n.storiesFavorites,
+          selected: filter.showFavorites,
+          onSelected: hasBookmarks
+              ? () {
+                  ref.read(storyFilterProvider.notifier).state =
+                      filter.copyWith(
+                    clearCategory: true,
+                    showFavorites: true,
+                  );
+                }
+              : null,
         ),
         _StoryCategoryChip(
           key: const Key('story-category-tab-prophets'),
@@ -33,6 +50,7 @@ class StoryCategoryTabs extends ConsumerWidget {
           onSelected: () {
             ref.read(storyFilterProvider.notifier).state = filter.copyWith(
               category: StoryCategory.prophets,
+              showFavorites: false,
             );
           },
         ),
@@ -43,6 +61,7 @@ class StoryCategoryTabs extends ConsumerWidget {
           onSelected: () {
             ref.read(storyFilterProvider.notifier).state = filter.copyWith(
               category: StoryCategory.quranic,
+              showFavorites: false,
             );
           },
         ),
@@ -61,14 +80,14 @@ class _StoryCategoryChip extends StatelessWidget {
 
   final String label;
   final bool selected;
-  final VoidCallback onSelected;
+  final VoidCallback? onSelected;
 
   @override
   Widget build(BuildContext context) {
     return ChoiceChip(
       label: Text(label),
       selected: selected,
-      onSelected: (_) => onSelected(),
+      onSelected: onSelected != null ? (_) => onSelected!() : null,
       selectedColor: AppColors.gold.withValues(alpha: 0.18),
       side: BorderSide(
         color: AppColors.gold.withValues(alpha: 0.35),

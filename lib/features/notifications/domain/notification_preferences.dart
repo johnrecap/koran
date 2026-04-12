@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:quran_kareem/features/more/domain/prayer_time_models.dart';
+import 'package:quran_kareem/features/prayer/domain/prayer_time_models.dart';
 import 'package:quran_kareem/features/notifications/domain/notification_reminder_type.dart';
 
 class NotificationReminderPreference {
