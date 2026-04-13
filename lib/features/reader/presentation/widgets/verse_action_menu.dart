@@ -17,6 +17,7 @@ class VerseActionMenu extends StatelessWidget {
     required this.onNote,
     required this.onTadabbur,
     required this.onInsights,
+    this.onMuallimStart,
   });
 
   final Ayah ayah;
@@ -29,6 +30,7 @@ class VerseActionMenu extends StatelessWidget {
   final VoidCallback onNote;
   final VoidCallback onTadabbur;
   final VoidCallback onInsights;
+  final VoidCallback? onMuallimStart;
 
   @override
   Widget build(BuildContext context) {
@@ -163,6 +165,16 @@ class VerseActionMenu extends StatelessWidget {
                             onTap: onTadabbur,
                             isDark: isDark,
                           ),
+                          if (onMuallimStart != null)
+                            _ActionButton(
+                              key: const ValueKey<String>(
+                                'verse-action-muallim',
+                              ),
+                              icon: Icons.record_voice_over_rounded,
+                              label: l10n.mushafMuallimStartFromHere,
+                              onTap: onMuallimStart!,
+                              isDark: isDark,
+                            ),
                         ],
                       ),
                     ),

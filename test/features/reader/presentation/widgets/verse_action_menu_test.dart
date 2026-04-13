@@ -15,6 +15,7 @@ void main() {
     var copyTapped = false;
     var noteTapped = false;
     var tadabburTapped = false;
+    var muallimTapped = false;
 
     await tester.pumpWidget(
       MaterialApp(
@@ -41,6 +42,7 @@ void main() {
             onNote: () => noteTapped = true,
             onTadabbur: () => tadabburTapped = true,
             onInsights: () => insightsTapped = true,
+            onMuallimStart: () => muallimTapped = true,
           ),
         ),
       ),
@@ -84,9 +86,17 @@ void main() {
       find.byKey(const ValueKey<String>('verse-action-tadabbur')),
       findsOneWidget,
     );
+    expect(
+      find.byKey(const ValueKey<String>('verse-action-muallim')),
+      findsOneWidget,
+    );
 
     await tester.tap(find.byIcon(Icons.self_improvement_rounded));
     await tester.pump();
     expect(tadabburTapped, isTrue);
+
+    await tester.tap(find.byKey(const ValueKey<String>('verse-action-muallim')));
+    await tester.pump();
+    expect(muallimTapped, isTrue);
   });
 }

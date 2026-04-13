@@ -13,12 +13,15 @@ import 'package:quran_kareem/core/widgets/app_error_widget.dart';
 import 'package:quran_kareem/data/datasources/local/quran_database.dart';
 import 'package:quran_kareem/data/datasources/local/user_preferences.dart';
 import 'package:quran_kareem/domain/entities/quran_entities.dart' as entity;
+import 'package:quran_kareem/features/audio/presentation/widgets/audio_hub_reciter_picker_sheet.dart';
 import 'package:quran_kareem/features/memorization/providers/memorization_providers.dart';
+import 'package:quran_kareem/features/reader/domain/muallim_models.dart';
 import 'package:quran_kareem/features/reader/domain/reader_ayah_insights_policy.dart';
 import 'package:quran_kareem/features/reader/domain/reader_exit_cleanup_policy.dart';
 import 'package:quran_kareem/features/reader/domain/reader_navigation_target.dart';
 import 'package:quran_kareem/features/reader/domain/reader_session_intent.dart';
 import 'package:quran_kareem/features/reader/presentation/widgets/jump_to_dialog.dart';
+import 'package:quran_kareem/features/reader/presentation/widgets/muallim_playback_controls.dart';
 import 'package:quran_kareem/features/reader/presentation/widgets/reader_ayah_note_sheet.dart';
 import 'package:quran_kareem/features/reader/presentation/widgets/reader_ayah_share_card_sheet.dart';
 import 'package:quran_kareem/features/reader/presentation/widgets/reader_ayah_translation_sheet.dart';
@@ -30,6 +33,7 @@ import 'package:quran_kareem/features/reader/presentation/widgets/torn_paper_ban
 import 'package:quran_kareem/features/reader/presentation/widgets/translation_mode_view.dart';
 import 'package:quran_kareem/features/reader/presentation/widgets/verse_action_menu.dart';
 import 'package:quran_kareem/features/reader/providers/manual_bookmarks_provider.dart';
+import 'package:quran_kareem/features/reader/providers/muallim_providers.dart';
 import 'package:quran_kareem/features/reader/providers/reader_providers.dart';
 import 'package:quran_kareem/features/settings/providers/settings_providers.dart';
 import 'package:quran_library/quran_library.dart';
@@ -43,6 +47,8 @@ class ReaderScreen extends ConsumerStatefulWidget {
 
 class _ReaderScreenState extends ConsumerState<ReaderScreen>
     with WidgetsBindingObserver {
+  static const double _muallimControlsInset = 112.0;
+
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final ScrollController _scrollController = ScrollController();
   Timer? _scrollPositionSaveDebounce;
@@ -682,6 +688,7 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen>
         onTranslations: () =>
             unawaited(_openAyahTranslationSheet(dialogContext, ayah)),
         onInsights: () => unawaited(_openAyahInsights(dialogContext, ayah)),
+        onMuallimStart: () => unawaited(_startMuallimFromAyah(dialogContext, ayah)),
       ),
     );
   }
@@ -724,6 +731,105 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen>
   void _toggleReaderMode(ReaderMode mode) {
     final nextMode = ReaderQuickTogglePolicy.nextMode(mode);
     unawaited(_setReaderMode(nextMode));
+  }
+
+  bool _currentReaderUsesDarkLibrary() {
+    final presentation = ref.read(readerNightPresentationProvider);
+    final palette = ReaderNightPresentationPolicy.paletteFor(
+      presentation: presentation,
+      appBrightness: Theme.of(context).brightness,
+    );
+    return palette.useDarkReaderLibrary;
+  }
+
+  Future<void> _toggleMuallimMode() async {
+    final notifier = ref.read(muallimStateProvider.notifier);
+    final snapshot = ref.read(muallimStateProvider);
+    if (snapshot.isEnabled) {
+      await notifier.disable();
+      return;
+    }
+    await notifier.enable();
+  }
+
+  Future<void> _showMuallimReciterPicker(
+    MuallimSnapshot snapshot, {
+    required bool isDarkMode,
+  }) async {
+    final reciters = ref.read(muallimAyahAudioServiceProvider).availableReciters;
+    if (reciters.isEmpty) {
+      return;
+    }
+
+    final selectedReciterId = snapshot.currentReciterId.isNotEmpty
+        ? snapshot.currentReciterId
+        : reciters.first.id;
+    final reciterId = await showAudioHubReciterPickerSheet(
+      context,
+      reciters: reciters,
+      selectedReciterId: selectedReciterId,
+    );
+    if (!mounted || reciterId == null) {
+      return;
+    }
+
+    await ref.read(muallimStateProvider.notifier).selectReciter(
+          reciterId,
+          context: context,
+          restartPlayback: snapshot.playbackState ==
+                  MuallimPlaybackState.playing ||
+              snapshot.playbackState == MuallimPlaybackState.paused,
+          isDarkMode: isDarkMode,
+        );
+  }
+
+  Future<void> _startMuallimFromAyah(
+    BuildContext dialogContext,
+    entity.Ayah ayah,
+  ) async {
+    final l10n = context.l10n;
+    if (!mounted || !dialogContext.mounted) {
+      return;
+    }
+
+    Navigator.of(dialogContext).pop();
+
+    try {
+      final ayahUQNumber = ayah.id > 0
+          ? ayah.id
+          : QuranCtrl.instance.getAyahUQBySurahAndAyah(
+              ayah.surahNumber,
+              ayah.ayahNumber,
+            );
+      if (ayahUQNumber == null) {
+        await _showReaderStatusMessage(l10n.verseAudioUnavailable);
+        return;
+      }
+
+      final pageNumber = ayah.page > 0
+          ? ayah.page
+          : await QuranDatabase.getPageForAyah(
+              ayah.surahNumber,
+              ayah.ayahNumber,
+            );
+      if (!mounted) {
+        return;
+      }
+
+      await ref.read(muallimStateProvider.notifier).startFromAyah(
+            MuallimAyahPosition(
+              surahNumber: ayah.surahNumber,
+              ayahNumber: ayah.ayahNumber,
+              ayahUQNumber: ayahUQNumber,
+              pageNumber: pageNumber,
+            ),
+            context: context,
+            isDarkMode: _currentReaderUsesDarkLibrary(),
+          );
+    } catch (error, stackTrace) {
+      AppLogger.error('ReaderScreen._startMuallimFromAyah', error, stackTrace);
+      await _showReaderStatusMessage(l10n.verseAudioUnavailable);
+    }
   }
 
   Future<void> _showNightReaderModeSheet(
@@ -822,20 +928,37 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen>
   Widget build(BuildContext context) {
     final mode = ref.watch(readerModeProvider);
     final navigationTarget = ref.watch(readerNavigationTargetProvider);
+    final muallimSnapshot = ref.watch(muallimStateProvider);
     final nightPresentation = ref.watch(readerNightPresentationProvider);
     final isFullscreenReader = ref.watch(readerFullscreenModeProvider);
     final palette = ReaderNightPresentationPolicy.paletteFor(
       presentation: nightPresentation,
       appBrightness: Theme.of(context).brightness,
     );
+    ref.listen<ReaderNavigationTarget?>(
+      muallimAutoNavigationTargetProvider,
+      (previous, next) {
+        if (!mounted || next == null) {
+          return;
+        }
+        if (ref.read(readerNavigationTargetProvider) == next) {
+          return;
+        }
+        unawaited(_navigateToTarget(next));
+      },
+    );
     final bgColor = palette.backgroundColor;
     final appLanguageCode =
         ReaderAppLanguagePolicy.resolve(Localizations.localeOf(context));
     final viewPadding = MediaQuery.viewPaddingOf(context);
-    final contentPadding = ReaderViewportInsetPolicy.contentPadding(
+    final baseContentPadding = ReaderViewportInsetPolicy.contentPadding(
       isFullscreen: isFullscreenReader,
       systemTopInset: viewPadding.top,
       systemBottomInset: viewPadding.bottom,
+    );
+    final contentPadding = baseContentPadding.copyWith(
+      bottom: baseContentPadding.bottom +
+          (muallimSnapshot.isEnabled ? _muallimControlsInset : 0),
     );
 
     final readerBody = switch (mode) {
@@ -877,12 +1000,19 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen>
           ),
           appBar: isFullscreenReader
               ? null
-              : _buildAppBar(mode, palette, nightPresentation),
+              : _buildAppBar(
+                  mode,
+                  palette,
+                  nightPresentation,
+                  muallimSnapshot,
+                ),
           body: _buildReaderSurface(
             child: readerBody,
             contentPadding: contentPadding,
             isFullscreenReader: isFullscreenReader,
             palette: palette,
+            navigationTarget: navigationTarget,
+            muallimSnapshot: muallimSnapshot,
           ),
         ));
   }
@@ -891,6 +1021,7 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen>
     ReaderMode mode,
     ReaderNightPalette palette,
     ReaderNightPresentation nightPresentation,
+    MuallimSnapshot muallimSnapshot,
   ) {
     return AppBar(
       backgroundColor: Colors.transparent,
@@ -917,6 +1048,16 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen>
           onPressed: () => unawaited(
             _showNightReaderModeSheet(nightPresentation),
           ),
+        ),
+        IconButton(
+          icon: Icon(
+            Icons.record_voice_over_rounded,
+            color: muallimSnapshot.isEnabled ? AppColors.gold : palette.textColor,
+          ),
+          tooltip: muallimSnapshot.isEnabled
+              ? context.l10n.mushafMuallimDisable
+              : context.l10n.mushafMuallimEnable,
+          onPressed: () => unawaited(_toggleMuallimMode()),
         ),
         IconButton(
           icon: const Icon(Icons.fullscreen_rounded),
@@ -959,6 +1100,8 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen>
     required EdgeInsets contentPadding,
     required bool isFullscreenReader,
     required ReaderNightPalette palette,
+    required ReaderNavigationTarget navigationTarget,
+    required MuallimSnapshot muallimSnapshot,
   }) {
     final paddedChild = Padding(
       padding: contentPadding,
@@ -978,6 +1121,41 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen>
       child: Stack(
         children: [
           Positioned.fill(child: paddedChild),
+          if (muallimSnapshot.isEnabled)
+            PositionedDirectional(
+              start: 0,
+              end: 0,
+              bottom: 0,
+              child: MuallimPlaybackControls(
+                snapshot: muallimSnapshot,
+                onPreviousAyah: () => unawaited(
+                  ref
+                      .read(muallimStateProvider.notifier)
+                      .previousAyah(context: context),
+                ),
+                onPrimaryAction: () => unawaited(
+                  ref.read(muallimStateProvider.notifier).togglePlayback(
+                        navigationTarget,
+                        context: context,
+                        isDarkMode: palette.useDarkReaderLibrary,
+                      ),
+                ),
+                onNextAyah: () => unawaited(
+                  ref.read(muallimStateProvider.notifier).nextAyah(
+                        context: context,
+                      ),
+                ),
+                onStop: () => unawaited(
+                  ref.read(muallimStateProvider.notifier).stop(),
+                ),
+                onSelectReciter: () => unawaited(
+                  _showMuallimReciterPicker(
+                    muallimSnapshot,
+                    isDarkMode: palette.useDarkReaderLibrary,
+                  ),
+                ),
+              ),
+            ),
           if (isFullscreenReader)
             PositionedDirectional(
               top: MediaQuery.paddingOf(context).top + 12,

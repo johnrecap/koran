@@ -37,6 +37,11 @@ class AppLocalizations {
       'verseActionTranslations': 'ترجمات',
       'verseActionCopy': 'نسخ',
       'verseActionNote': 'ملاحظة',
+      'mushafMuallimTitle': 'المصحف المعلّم',
+      'mushafMuallimEnable': 'تفعيل المصحف المعلّم',
+      'mushafMuallimDisable': 'إيقاف المصحف المعلّم',
+      'mushafMuallimStartFromHere': 'ابدأ المصحف المعلّم من هنا',
+      'mushafMuallimCurrentAyah': 'الآية الحالية',
       'verseMetadataUnavailable': 'تعذر تحميل بيانات السورة الآن.',
       'verseShareUnavailable': 'تعذرت مشاركة الآية الآن.',
       'verseCopyUnavailable': 'تعذر نسخ هذه الآية الآن.',
@@ -209,6 +214,11 @@ class AppLocalizations {
       'verseActionTranslations': 'Translations',
       'verseActionCopy': 'Copy',
       'verseActionNote': 'Note',
+      'mushafMuallimTitle': 'Teacher\'s Mushaf',
+      'mushafMuallimEnable': 'Enable Mu\'allim mode',
+      'mushafMuallimDisable': 'Exit Mu\'allim mode',
+      'mushafMuallimStartFromHere': 'Start Mu\'allim from here',
+      'mushafMuallimCurrentAyah': 'Current ayah',
       'verseActionTadabbur': 'Tadabbur',
       'verseMetadataUnavailable': 'Unable to load surah details right now.',
       'verseShareUnavailable': 'Unable to share this verse right now.',
@@ -1550,6 +1560,13 @@ class AppLocalizations {
   String get verseActionTranslations => _value('verseActionTranslations');
   String get verseActionCopy => _value('verseActionCopy');
   String get verseActionNote => _value('verseActionNote');
+  String get mushafMuallimTitle => _value('mushafMuallimTitle');
+  String get mushafMuallimEnable => _value('mushafMuallimEnable');
+  String get mushafMuallimDisable => _value('mushafMuallimDisable');
+  String get mushafMuallimStartFromHere =>
+      _value('mushafMuallimStartFromHere');
+  String get mushafMuallimCurrentAyah =>
+      _value('mushafMuallimCurrentAyah');
   String get verseActionTadabbur => _value('verseActionTadabbur');
   String get verseMetadataUnavailable => _value('verseMetadataUnavailable');
   String get verseShareUnavailable => _value('verseShareUnavailable');
