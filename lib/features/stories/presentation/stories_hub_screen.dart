@@ -208,6 +208,24 @@ class _StoriesHubLoadedBody extends ConsumerWidget {
 
               final crossAxisCount = constraints.maxWidth < 520 ? 1 : 2;
 
+              if (crossAxisCount == 1) {
+                return ListView.separated(
+                  key: const Key('stories-hub-grid'),
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+                  itemCount: stories.length,
+                  separatorBuilder: (_, __) => const SizedBox(height: 12),
+                  itemBuilder: (context, index) {
+                    final story = stories[index];
+                    return StoryCard(
+                      story: story,
+                      progress: progressByStory[story.id],
+                      isBookmarked: bookmarks.contains(story.id),
+                      onTap: () => onStoryPressed(story),
+                    );
+                  },
+                );
+              }
+
               return GridView.builder(
                 key: const Key('stories-hub-grid'),
                 padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
@@ -215,7 +233,7 @@ class _StoriesHubLoadedBody extends ConsumerWidget {
                   crossAxisCount: crossAxisCount,
                   crossAxisSpacing: 12,
                   mainAxisSpacing: 12,
-                  childAspectRatio: crossAxisCount == 1 ? 2.35 : 0.88,
+                  childAspectRatio: 0.72,
                 ),
                 itemCount: stories.length,
                 itemBuilder: (context, index) {
@@ -252,7 +270,7 @@ class _StoriesHubLoadingView extends StatelessWidget {
             crossAxisCount: crossAxisCount,
             crossAxisSpacing: 12,
             mainAxisSpacing: 12,
-            childAspectRatio: crossAxisCount == 1 ? 2.35 : 0.88,
+            childAspectRatio: crossAxisCount == 1 ? 2.1 : 0.82,
           ),
           itemCount: 4,
           itemBuilder: (context, index) {

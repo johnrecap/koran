@@ -8,6 +8,72 @@ import 'package:quran_kareem/features/notifications/domain/prayer_notification_p
 import 'package:quran_kareem/features/notifications/domain/scheduled_notification_descriptor.dart';
 
 void main() {
+  test(
+    'builds reminders for the remaining prayers of the day and tomorrow fajr with unique ids',
+    () {
+      final schedules = PrayerNotificationPolicy.buildRemainderOfDay(
+        snapshot: _sampleSnapshot(
+          nextPrayer: PrayerType.asr,
+          nextPrayerTime: DateTime(2026, 3, 30, 15, 29),
+        ),
+        now: DateTime(2026, 3, 30, 12, 5),
+        offset: PrayerReminderOffset.tenMinBefore,
+        labelResolver: (type) => type.name,
+      );
+
+      expect(schedules, hasLength(4));
+      expect(
+        schedules.map((schedule) => schedule.id),
+        <int>[41022, 41023, 41024, 41030],
+      );
+      expect(
+        schedules.map((schedule) => schedule.scheduledAt),
+        <DateTime>[
+          DateTime(2026, 3, 30, 15, 19),
+          DateTime(2026, 3, 30, 17, 59),
+          DateTime(2026, 3, 30, 19, 17),
+          DateTime(2026, 3, 31, 4, 16),
+        ],
+      );
+      expect(
+        schedules.every(
+          (schedule) =>
+              schedule.launchTarget ==
+              const NotificationLaunchTarget.prayerDetails(),
+        ),
+        isTrue,
+      );
+    },
+  );
+
+  test(
+    'does not add tomorrow fajr while today fajr is still pending to avoid id collisions',
+    () {
+      final schedules = PrayerNotificationPolicy.buildRemainderOfDay(
+        snapshot: _sampleSnapshot(
+          nextPrayer: PrayerType.fajr,
+          nextPrayerTime: DateTime(2026, 3, 30, 4, 26),
+        ),
+        now: DateTime(2026, 3, 30, 4),
+        offset: PrayerReminderOffset.tenMinBefore,
+        labelResolver: (type) => type.name,
+      );
+
+      // 5 today prayers + 1 tomorrow fajr = 6
+      expect(schedules, hasLength(6));
+      // Today's Fajr uses prayerReminder ID (41020)
+      expect(
+        schedules.where((schedule) => schedule.id == 41020),
+        hasLength(1),
+      );
+      // Tomorrow's Fajr uses adhanAlert ID (41030)
+      expect(
+        schedules.where((schedule) => schedule.id == 41030),
+        hasLength(1),
+      );
+    },
+  );
+
   test('builds the next prayer reminder from the current prayer snapshot', () {
     final reminder = PrayerNotificationPolicy.buildNextReminder(
       snapshot: _sampleSnapshot(
@@ -22,7 +88,7 @@ void main() {
     expect(reminder!.reminderType, NotificationReminderType.prayer);
     expect(
       reminder.id,
-      ScheduledNotificationIdPolicy.family(NotificationReminderType.prayer),
+      ScheduledNotificationIdPolicy.prayerReminder(PrayerType.maghrib),
     );
     expect(
         reminder.launchTarget, const NotificationLaunchTarget.prayerDetails());
@@ -53,6 +119,17 @@ void main() {
     );
 
     expect(reminder, isNull);
+  });
+
+  test('returns an empty schedule when no prayer snapshot is available', () {
+    final schedules = PrayerNotificationPolicy.buildRemainderOfDay(
+      snapshot: null,
+      now: DateTime(2026, 3, 30, 17, 30),
+      offset: PrayerReminderOffset.tenMinBefore,
+      labelResolver: (type) => type.name,
+    );
+
+    expect(schedules, isEmpty);
   });
 }
 

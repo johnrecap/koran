@@ -27,6 +27,7 @@ class QuranPageView extends StatefulWidget {
 class _QuranPageViewState extends State<QuranPageView> {
   late PageController _pageController;
   late List<List<Ayah>> _pages;
+  int _currentPageIndex = 0;
 
   @override
   void initState() {
@@ -71,6 +72,9 @@ class _QuranPageViewState extends State<QuranPageView> {
             reverse: true, // RTL: swipe right = next page
             itemCount: _pages.length,
             onPageChanged: (index) {
+              setState(() {
+                _currentPageIndex = index;
+              });
               widget.onPageChanged?.call(index);
             },
             itemBuilder: (context, pageIndex) {
@@ -109,7 +113,7 @@ class _QuranPageViewState extends State<QuranPageView> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                '${VerseMarker.toArabicNumerals(_pages.length)} / ${VerseMarker.toArabicNumerals((_pageController.hasClients ? _pageController.page?.round() ?? 0 : 0) + 1)}',
+                '${VerseMarker.toArabicNumerals(_pages.length)} / ${VerseMarker.toArabicNumerals(_currentPageIndex + 1)}',
                 style: TextStyle(
                   fontSize: 12,
                   color: isDark ? AppColors.textMuted : AppColors.textMuted,

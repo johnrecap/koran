@@ -6,10 +6,15 @@ import 'package:quran_kareem/core/localization/app_localizations.dart';
 import 'package:quran_kareem/features/memorization/data/spaced_review_item.dart';
 import 'package:quran_kareem/features/memorization/providers/spaced_review_providers.dart';
 import 'package:quran_kareem/features/more/providers/more_providers.dart';
+import 'package:quran_kareem/core/services/app_bootstrap_service.dart';
+import 'package:quran_kareem/features/notifications/data/adhan_audio_cache_service.dart';
+import 'package:quran_kareem/features/notifications/data/adhan_audio_playback_service.dart';
 import 'package:quran_kareem/features/notifications/data/local_notifications_service.dart';
 import 'package:quran_kareem/features/notifications/data/notification_preferences_local_data_source.dart';
 import 'package:quran_kareem/features/notifications/data/notification_timezone_service.dart';
 import 'package:quran_kareem/features/notifications/data/package_local_notifications_service.dart';
+import 'package:quran_kareem/features/notifications/domain/adhan_muezzin.dart';
+import 'package:quran_kareem/features/notifications/domain/adhan_playback_mode.dart';
 import 'package:quran_kareem/features/notifications/domain/notification_launch_target.dart';
 import 'package:quran_kareem/features/notifications/domain/notification_permission_state.dart';
 import 'package:quran_kareem/features/notifications/domain/notification_preferences.dart';
@@ -22,15 +27,33 @@ import 'package:quran_kareem/features/settings/providers/settings_providers.dart
 
 final notificationTimezoneServiceProvider =
     Provider<NotificationTimezoneService>((ref) {
+  final bootstrap = AppBootstrapService.instance;
+  if (bootstrap.isInitialized) {
+    return bootstrap.notificationTimezoneService;
+  }
   return DeviceNotificationTimezoneService();
 });
 
 final localNotificationsServiceProvider = Provider<LocalNotificationsService>((
   ref,
 ) {
+  final bootstrap = AppBootstrapService.instance;
+  if (bootstrap.isInitialized) {
+    return bootstrap.localNotificationsService;
+  }
   return PackageLocalNotificationsService(
     timezoneService: ref.watch(notificationTimezoneServiceProvider),
   );
+});
+
+final adhanAudioCacheServiceProvider = Provider<AdhanAudioCacheService>((ref) {
+  return AdhanAudioCacheService();
+});
+
+final adhanAudioPlaybackServiceProvider =
+    Provider<AdhanAudioPlaybackService>((ref) {
+  final cacheService = ref.watch(adhanAudioCacheServiceProvider);
+  return AdhanAudioPlaybackService(cacheService: cacheService);
 });
 
 final notificationPreferencesLocalDataSourceProvider =
@@ -60,6 +83,16 @@ final notificationPreferencesControllerProvider = NotifierProvider<
     NotificationPreferencesController, NotificationPreferences>(
   NotificationPreferencesController.new,
 );
+
+Future<void> resyncNotificationsOnAppResume({
+  required Future<void> Function() refreshPermission,
+  required Future<void> Function() resyncAll,
+  required void Function() invalidatePrayerSnapshot,
+}) async {
+  await refreshPermission();
+  await resyncAll();
+  invalidatePrayerSnapshot();
+}
 
 class NotificationPermissionController
     extends Notifier<NotificationPermissionState> {
@@ -168,6 +201,32 @@ class NotificationPreferencesController
   Future<void> setPrayerReminderOffset(PrayerReminderOffset offset) async {
     await _ready;
     final nextState = state.copyWithPrayerReminderOffset(offset);
+    if (nextState == state) {
+      await _resyncFamily(NotificationReminderType.prayer);
+      return;
+    }
+
+    state = nextState;
+    await _persist();
+    await _resyncFamily(NotificationReminderType.prayer);
+  }
+
+  Future<void> setAdhanPlaybackMode(AdhanPlaybackMode playbackMode) async {
+    await _ready;
+    final nextState = state.copyWithAdhanPlaybackMode(playbackMode);
+    if (nextState == state) {
+      await _resyncFamily(NotificationReminderType.prayer);
+      return;
+    }
+
+    state = nextState;
+    await _persist();
+    await _resyncFamily(NotificationReminderType.prayer);
+  }
+
+  Future<void> setSelectedMuezzin(AdhanMuezzin muezzin) async {
+    await _ready;
+    final nextState = state.copyWithSelectedMuezzin(muezzin);
     if (nextState == state) {
       await _resyncFamily(NotificationReminderType.prayer);
       return;
@@ -323,21 +382,14 @@ class NotificationPreferencesController
     required AppLocalizations l10n,
   }) {
     final snapshot = ref.read(homePrayerSnapshotProvider).valueOrNull;
-    final reminder = PrayerNotificationPolicy.buildNextReminder(
+    return PrayerNotificationPolicy.buildRemainderOfDay(
       snapshot: snapshot,
       now: now,
       offset: state.prayerReminderOffset,
       title: l10n.notificationsReminderPrayerTitle,
-      body: snapshot == null
-          ? l10n.notificationsReminderPrayerBodyGeneric
-          : l10n.notificationsReminderPrayerBody(
-              _prayerLabelFor(snapshot.nextPrayer, l10n),
-            ),
+      labelResolver: (type) => _prayerLabelFor(type, l10n),
+      bodyBuilder: (label) => l10n.notificationsReminderPrayerBody(label),
     );
-    if (reminder == null) {
-      return const <ScheduledNotificationDescriptor>[];
-    }
-    return [reminder];
   }
 
   List<ScheduledNotificationDescriptor> _buildReviewSchedule({

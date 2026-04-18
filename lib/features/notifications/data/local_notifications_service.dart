@@ -11,10 +11,15 @@ abstract class LocalNotificationsService {
 
   Future<NotificationPermissionState> requestPermission();
 
+  Future<void> scheduleMultiple(List<ScheduledNotificationDescriptor> schedules);
+
   Future<void> replaceFamilySchedules({
     required NotificationReminderType reminderType,
     required List<ScheduledNotificationDescriptor> schedules,
-  });
+  }) async {
+    await cancelFamily(reminderType);
+    await scheduleMultiple(schedules);
+  }
 
   Future<void> cancelFamily(NotificationReminderType reminderType);
 

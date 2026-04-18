@@ -138,7 +138,7 @@ class StoryCard extends StatelessWidget {
                       height: 1.45,
                     ),
                   ),
-                  const Spacer(),
+                  const SizedBox(height: 12),
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,

@@ -21,6 +21,7 @@ import '../../features/prayer/domain/prayer_time_models.dart';
 import '../../features/notifications/presentation/screens/notification_settings_screen.dart';
 import '../../features/onboarding/presentation/screens/cinematic_onboarding_screen.dart';
 import '../../features/onboarding/presentation/screens/mushaf_setup_screen.dart';
+import '../../features/onboarding/presentation/screens/permission_request_screen.dart';
 import '../../features/onboarding/presentation/screens/splash_screen.dart';
 import '../../features/quizzes/presentation/screens/quiz_history_screen.dart';
 import '../../features/quizzes/presentation/screens/quiz_hub_screen.dart';
@@ -56,6 +57,10 @@ GoRouter createAppRouter({
       GoRoute(
         path: '/onboarding',
         builder: (context, state) => const CinematicOnboardingScreen(),
+      ),
+      GoRoute(
+        path: '/permissions',
+        builder: (context, state) => const PermissionRequestScreen(),
       ),
       GoRoute(
         path: '/tafsir/:surah/:ayah',

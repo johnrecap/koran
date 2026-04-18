@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:quran_kareem/core/services/app_bootstrap_service.dart';
 import 'package:quran_kareem/core/utils/app_logger.dart';
 import 'package:quran_kareem/features/premium/data/premium_purchases_service.dart';
 import 'package:quran_kareem/features/premium/domain/premium_access_key.dart';
@@ -7,6 +8,10 @@ import 'package:quran_kareem/features/premium/domain/premium_product_descriptor.
 
 final premiumPurchasesServiceProvider =
     Provider<PremiumPurchasesService>((ref) {
+  final bootstrap = AppBootstrapService.instance;
+  if (bootstrap.isInitialized) {
+    return bootstrap.premiumPurchasesService;
+  }
   return createDefaultPremiumPurchasesService();
 });
 

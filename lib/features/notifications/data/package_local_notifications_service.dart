@@ -14,6 +14,13 @@ const String _notificationsChannelId = 'quran_kareem_reminders';
 const String _notificationsChannelName = 'Quran Kareem reminders';
 const String _notificationsChannelDescription =
     'Daily devotional and memorization reminders';
+
+/// Dedicated channel for prayer notifications with custom sounds.
+const String _prayerNotificationsChannelId = 'quran_kareem_prayer_reminders';
+const String _prayerNotificationsChannelName = 'تنبيهات الصلاة';
+const String _prayerNotificationsChannelDescription =
+    'Prayer time reminders with custom adhan sounds';
+
 const String _androidNotificationIcon = '@drawable/ic_stat_quran_notification';
 
 @pragma('vm:entry-point')
@@ -58,6 +65,7 @@ class PackageLocalNotificationsService implements LocalNotificationsService {
       onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
     );
 
+    // Default reminders channel.
     final androidPlugin = _plugin.resolvePlatformSpecificImplementation<
         AndroidFlutterLocalNotificationsPlugin>();
     await androidPlugin?.createNotificationChannel(
@@ -69,12 +77,33 @@ class PackageLocalNotificationsService implements LocalNotificationsService {
       ),
     );
 
+    // Dedicated prayer notifications channel (supports custom sounds).
+    await androidPlugin?.createNotificationChannel(
+      const AndroidNotificationChannel(
+        _prayerNotificationsChannelId,
+        _prayerNotificationsChannelName,
+        description: _prayerNotificationsChannelDescription,
+        importance: Importance.high,
+      ),
+    );
+
     _initialized = true;
   }
 
   @override
   Future<void> cancelFamily(NotificationReminderType reminderType) async {
     try {
+      if (reminderType == NotificationReminderType.prayer) {
+        // Cancel ALL per-prayer notification IDs (reminders + adhan alerts).
+        for (final id in ScheduledNotificationIdPolicy.allPrayerIds) {
+          await _plugin.cancel(id: id);
+        }
+        // Also cancel the legacy single-ID for backward compatibility.
+        await _plugin.cancel(
+          id: ScheduledNotificationIdPolicy.family(reminderType),
+        );
+        return;
+      }
       await _plugin.cancel(
         id: ScheduledNotificationIdPolicy.family(reminderType),
       );
@@ -172,6 +201,21 @@ class PackageLocalNotificationsService implements LocalNotificationsService {
   }
 
   @override
+  Future<void> scheduleMultiple(
+    List<ScheduledNotificationDescriptor> schedules,
+  ) async {
+    try {
+      for (final schedule in schedules) {
+        await _schedule(schedule);
+      }
+    } on MissingPluginException {
+      return;
+    } on Object {
+      return;
+    }
+  }
+
+  @override
   Future<void> replaceFamilySchedules({
     required NotificationReminderType reminderType,
     required List<ScheduledNotificationDescriptor> schedules,
@@ -190,16 +234,33 @@ class PackageLocalNotificationsService implements LocalNotificationsService {
 
   Future<void> _schedule(ScheduledNotificationDescriptor schedule) async {
     final scheduledDate = _timezoneService.resolve(schedule.scheduledAt);
-    const notificationDetails = NotificationDetails(
+
+    // Use the prayer channel with custom sound for prayer notifications.
+    final bool isPrayerNotification =
+        schedule.reminderType == NotificationReminderType.prayer;
+    final String channelId =
+        isPrayerNotification ? _prayerNotificationsChannelId : _notificationsChannelId;
+    final String channelName =
+        isPrayerNotification ? _prayerNotificationsChannelName : _notificationsChannelName;
+    final String channelDescription = isPrayerNotification
+        ? _prayerNotificationsChannelDescription
+        : _notificationsChannelDescription;
+
+    final notificationDetails = NotificationDetails(
       android: AndroidNotificationDetails(
-        _notificationsChannelId,
-        _notificationsChannelName,
-        channelDescription: _notificationsChannelDescription,
+        channelId,
+        channelName,
+        channelDescription: channelDescription,
         importance: Importance.high,
         priority: Priority.high,
         icon: _androidNotificationIcon,
+        sound: schedule.androidRawSoundName != null
+            ? RawResourceAndroidNotificationSound(
+                schedule.androidRawSoundName!,
+              )
+            : null,
       ),
-      iOS: DarwinNotificationDetails(),
+      iOS: const DarwinNotificationDetails(),
     );
 
     await _plugin.zonedSchedule(

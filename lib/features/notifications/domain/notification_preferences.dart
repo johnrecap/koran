@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:quran_kareem/features/notifications/domain/adhan_muezzin.dart';
+import 'package:quran_kareem/features/notifications/domain/adhan_playback_mode.dart';
 import 'package:quran_kareem/features/prayer/domain/prayer_time_models.dart';
 import 'package:quran_kareem/features/notifications/domain/notification_reminder_type.dart';
 
@@ -65,6 +67,8 @@ class NotificationPreferences {
     required this.dailyWird,
     required this.prayer,
     this.prayerReminderOffset = PrayerReminderOffset.fifteenMinBefore,
+    this.adhanPlaybackMode = AdhanPlaybackMode.notificationOnly,
+    this.selectedMuezzin = AdhanMuezzin.misharyAlafasy,
     required this.fridayKahf,
     required this.spacedReview,
     required this.adhkar,
@@ -77,6 +81,8 @@ class NotificationPreferences {
         ),
         prayer = const NotificationReminderPreference(enabled: false),
         prayerReminderOffset = PrayerReminderOffset.fifteenMinBefore,
+        adhanPlaybackMode = AdhanPlaybackMode.notificationOnly,
+        selectedMuezzin = AdhanMuezzin.misharyAlafasy,
         fridayKahf = const NotificationReminderPreference(
           enabled: false,
           time: TimeOfDay(hour: 9, minute: 0),
@@ -90,6 +96,8 @@ class NotificationPreferences {
   final NotificationReminderPreference dailyWird;
   final NotificationReminderPreference prayer;
   final PrayerReminderOffset prayerReminderOffset;
+  final AdhanPlaybackMode adhanPlaybackMode;
+  final AdhanMuezzin selectedMuezzin;
   final NotificationReminderPreference fridayKahf;
   final NotificationReminderPreference spacedReview;
   final NotificationReminderPreference adhkar;
@@ -98,6 +106,8 @@ class NotificationPreferences {
         'dailyWird': dailyWird.toMap(),
         'prayer': prayer.toMap(),
         'prayerReminderOffset': prayerReminderOffset.name,
+        'adhanPlaybackMode': adhanPlaybackMode.name,
+        'selectedMuezzin': selectedMuezzin.name,
         'fridayKahf': fridayKahf.toMap(),
         'spacedReview': spacedReview.toMap(),
         'adhkar': adhkar.toMap(),
@@ -120,6 +130,12 @@ class NotificationPreferences {
       ),
       prayerReminderOffset: PrayerReminderOffset.fromName(
         map['prayerReminderOffset'] as String?,
+      ),
+      adhanPlaybackMode: AdhanPlaybackMode.fromName(
+        map['adhanPlaybackMode'] as String?,
+      ),
+      selectedMuezzin: AdhanMuezzin.fromName(
+        map['selectedMuezzin'] as String?,
       ),
       fridayKahf: NotificationReminderPreference.fromMap(
         map['fridayKahf'] as Map<String, dynamic>?,
@@ -181,6 +197,36 @@ class NotificationPreferences {
       dailyWird: dailyWird,
       prayer: prayer,
       prayerReminderOffset: offset,
+      adhanPlaybackMode: adhanPlaybackMode,
+      selectedMuezzin: selectedMuezzin,
+      fridayKahf: fridayKahf,
+      spacedReview: spacedReview,
+      adhkar: adhkar,
+    );
+  }
+
+  NotificationPreferences copyWithAdhanPlaybackMode(
+    AdhanPlaybackMode playbackMode,
+  ) {
+    return NotificationPreferences(
+      dailyWird: dailyWird,
+      prayer: prayer,
+      prayerReminderOffset: prayerReminderOffset,
+      adhanPlaybackMode: playbackMode,
+      selectedMuezzin: selectedMuezzin,
+      fridayKahf: fridayKahf,
+      spacedReview: spacedReview,
+      adhkar: adhkar,
+    );
+  }
+
+  NotificationPreferences copyWithSelectedMuezzin(AdhanMuezzin muezzin) {
+    return NotificationPreferences(
+      dailyWird: dailyWird,
+      prayer: prayer,
+      prayerReminderOffset: prayerReminderOffset,
+      adhanPlaybackMode: adhanPlaybackMode,
+      selectedMuezzin: muezzin,
       fridayKahf: fridayKahf,
       spacedReview: spacedReview,
       adhkar: adhkar,
@@ -196,6 +242,8 @@ class NotificationPreferences {
           reminderType == NotificationReminderType.dailyWird ? next : dailyWird,
       prayer: reminderType == NotificationReminderType.prayer ? next : prayer,
       prayerReminderOffset: prayerReminderOffset,
+      adhanPlaybackMode: adhanPlaybackMode,
+      selectedMuezzin: selectedMuezzin,
       fridayKahf: reminderType == NotificationReminderType.fridayKahf
           ? next
           : fridayKahf,
@@ -215,6 +263,8 @@ class NotificationPreferences {
         other.dailyWird == dailyWird &&
         other.prayer == prayer &&
         other.prayerReminderOffset == prayerReminderOffset &&
+        other.adhanPlaybackMode == adhanPlaybackMode &&
+        other.selectedMuezzin == selectedMuezzin &&
         other.fridayKahf == fridayKahf &&
         other.spacedReview == spacedReview &&
         other.adhkar == adhkar;
@@ -225,6 +275,8 @@ class NotificationPreferences {
         dailyWird,
         prayer,
         prayerReminderOffset,
+        adhanPlaybackMode,
+        selectedMuezzin,
         fridayKahf,
         spacedReview,
         adhkar,

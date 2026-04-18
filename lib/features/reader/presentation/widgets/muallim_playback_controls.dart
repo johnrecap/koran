@@ -13,6 +13,7 @@ class MuallimPlaybackControls extends StatelessWidget {
     required this.onNextAyah,
     required this.onStop,
     required this.onSelectReciter,
+    required this.onRetry,
   });
 
   final MuallimSnapshot snapshot;
@@ -21,6 +22,7 @@ class MuallimPlaybackControls extends StatelessWidget {
   final VoidCallback onNextAyah;
   final VoidCallback onStop;
   final VoidCallback onSelectReciter;
+  final VoidCallback onRetry;
 
   @override
   Widget build(BuildContext context) {
@@ -29,12 +31,14 @@ class MuallimPlaybackControls extends StatelessWidget {
     final primaryIcon = snapshot.playbackState == MuallimPlaybackState.playing
         ? Icons.pause_rounded
         : Icons.play_arrow_rounded;
-    final primaryTooltip = snapshot.playbackState == MuallimPlaybackState.playing
-        ? context.l10n.audioHubPause
-        : context.l10n.audioHubPlay;
+    final primaryTooltip =
+        snapshot.playbackState == MuallimPlaybackState.playing
+            ? context.l10n.audioHubPause
+            : context.l10n.audioHubPlay;
     final reciterLabel = snapshot.currentReciterName.isNotEmpty
         ? snapshot.currentReciterName
         : context.l10n.audioHubSelectReciter;
+    final statusBanner = _buildStatusBanner(context, colorScheme);
 
     return SafeArea(
       top: false,
@@ -58,7 +62,10 @@ class MuallimPlaybackControls extends StatelessWidget {
                         children: [
                           Text(
                             context.l10n.mushafMuallimCurrentAyah,
-                            style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelMedium
+                                ?.copyWith(
                                   color: colorScheme.secondary,
                                   fontWeight: FontWeight.w700,
                                 ),
@@ -66,7 +73,10 @@ class MuallimPlaybackControls extends StatelessWidget {
                           const SizedBox(height: 4),
                           Text(
                             _buildAyahLabel(context),
-                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.copyWith(
                                   fontFamily: 'Amiri',
                                   fontWeight: FontWeight.w700,
                                 ),
@@ -82,6 +92,10 @@ class MuallimPlaybackControls extends StatelessWidget {
                     ),
                   ],
                 ),
+                if (statusBanner != null) ...[
+                  const SizedBox(height: 12),
+                  statusBanner,
+                ],
                 const SizedBox(height: 12),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -137,5 +151,64 @@ class MuallimPlaybackControls extends StatelessWidget {
         ? toArabicDigits(currentAyah.ayahNumber)
         : currentAyah.ayahNumber.toString();
     return '$surah:$ayah';
+  }
+
+  Widget? _buildStatusBanner(BuildContext context, ColorScheme colorScheme) {
+    final message = _statusMessage(context);
+    if (message == null) {
+      return null;
+    }
+
+    final isPlaybackError =
+        snapshot.playbackState == MuallimPlaybackState.error;
+    final backgroundColor = isPlaybackError
+        ? colorScheme.errorContainer.withValues(alpha: 0.45)
+        : colorScheme.secondaryContainer.withValues(alpha: 0.55);
+    final foregroundColor =
+        isPlaybackError ? colorScheme.error : colorScheme.onSecondaryContainer;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              message,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: foregroundColor,
+                    fontWeight: FontWeight.w600,
+                  ),
+            ),
+          ),
+          if (isPlaybackError)
+            TextButton(
+              onPressed: onRetry,
+              child: Text(context.l10n.errorRetry),
+            ),
+        ],
+      ),
+    );
+  }
+
+  String? _statusMessage(BuildContext context) {
+    if (snapshot.playbackState == MuallimPlaybackState.error) {
+      return context.l10n.mushafMuallimPlaybackError;
+    }
+
+    switch (snapshot.timingStatus) {
+      case MuallimTimingStatus.loadError:
+        return context.l10n.mushafMuallimTimingLoadFallback;
+      case MuallimTimingStatus.unavailable:
+      case MuallimTimingStatus.unmappedReciter:
+        return context.l10n.mushafMuallimTimingUnavailable;
+      case MuallimTimingStatus.idle:
+      case MuallimTimingStatus.loading:
+      case MuallimTimingStatus.available:
+        return null;
+    }
   }
 }

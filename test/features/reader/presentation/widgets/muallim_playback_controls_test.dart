@@ -41,6 +41,7 @@ void main() {
             onNextAyah: () => nextTapped = true,
             onStop: () => stopTapped = true,
             onSelectReciter: () => reciterTapped = true,
+            onRetry: () {},
           ),
         ),
       ),
@@ -69,5 +70,93 @@ void main() {
     await tester.tap(find.byKey(const ValueKey<String>('muallim-reciter')));
     await tester.pump();
     expect(reciterTapped, isTrue);
+  });
+
+  testWidgets('shows timing fallback status for unmapped reciters',
+      (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        locale: const Locale('en'),
+        supportedLocales: AppLocalizations.supportedLocales,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        home: Scaffold(
+          body: MuallimPlaybackControls(
+            snapshot: MuallimSnapshot.fromPlayback(
+              const MuallimPlaybackSnapshot(
+                playbackState: MuallimPlaybackState.playing,
+                currentAyah: MuallimAyahPosition(
+                  surahNumber: 1,
+                  ayahNumber: 1,
+                  ayahUQNumber: 1,
+                  pageNumber: 1,
+                ),
+                position: Duration.zero,
+                duration: Duration(seconds: 5),
+                currentReciterId: 'Fares_Abbad_64kbps',
+                currentReciterName: 'Fares Abbad',
+              ),
+              isEnabled: true,
+              timingStatus: MuallimTimingStatus.unmappedReciter,
+            ),
+            onPreviousAyah: () {},
+            onPrimaryAction: () {},
+            onNextAyah: () {},
+            onStop: () {},
+            onSelectReciter: () {},
+            onRetry: () {},
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Word timing is unavailable for this reciter.'),
+        findsOneWidget);
+  });
+
+  testWidgets('shows retry affordance when playback enters error state',
+      (tester) async {
+    var retried = false;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        locale: const Locale('en'),
+        supportedLocales: AppLocalizations.supportedLocales,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        home: Scaffold(
+          body: MuallimPlaybackControls(
+            snapshot: MuallimSnapshot.fromPlayback(
+              const MuallimPlaybackSnapshot(
+                playbackState: MuallimPlaybackState.error,
+                currentAyah: MuallimAyahPosition(
+                  surahNumber: 2,
+                  ayahNumber: 5,
+                  ayahUQNumber: 12,
+                  pageNumber: 2,
+                ),
+                position: Duration.zero,
+                duration: Duration.zero,
+                currentReciterId: 'reader-1',
+                currentReciterName: 'Reader One',
+              ),
+              isEnabled: true,
+            ),
+            onPreviousAyah: () {},
+            onPrimaryAction: () {},
+            onNextAyah: () {},
+            onStop: () {},
+            onSelectReciter: () {},
+            onRetry: () => retried = true,
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Unable to continue Mu\'allim playback right now.'),
+        findsOneWidget);
+    await tester.tap(find.text('Retry'));
+    await tester.pump();
+    expect(retried, isTrue);
   });
 }

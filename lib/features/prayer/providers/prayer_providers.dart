@@ -260,8 +260,19 @@ final homePrayerSnapshotProvider =
           isUsingCachedData: false,
           cachedFetchedAt: null,
         );
-        yield freshSnapshot;
-        scheduleRefresh(freshSnapshot);
+        // Only yield the fresh snapshot if it provides new data.
+        // When cached data was already yielded and the prayer times
+        // are for the same date, skip the redundant yield to prevent
+        // unnecessary downstream rebuilds.
+        final isSameDayAsCached = cached != null &&
+            day.gregorianDate == cached.day.gregorianDate &&
+            day.prayers.length == cached.day.prayers.length;
+        if (!yieldedData || !isSameDayAsCached) {
+          yield freshSnapshot;
+          scheduleRefresh(freshSnapshot);
+        } else {
+          scheduleRefresh(freshSnapshot);
+        }
         yieldedData = true;
       }
     } catch (error, stackTrace) {

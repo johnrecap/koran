@@ -48,14 +48,14 @@ void main() {
     test('merges enabled state with playback data', () {
       const playback = MuallimPlaybackSnapshot(
         playbackState: MuallimPlaybackState.playing,
-        currentAyah: const MuallimAyahPosition(
+        currentAyah: MuallimAyahPosition(
           surahNumber: 2,
           ayahNumber: 255,
           ayahUQNumber: 281,
           pageNumber: 42,
         ),
-        position: const Duration(seconds: 3),
-        duration: const Duration(seconds: 7),
+        position: Duration(seconds: 3),
+        duration: Duration(seconds: 7),
         currentReciterId: 'reader-1',
         currentReciterName: 'Reader One',
       );

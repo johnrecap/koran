@@ -167,6 +167,17 @@ class UserPreferences {
     await p.setBool(_mushafSetupCompleteKey, complete);
   }
 
+  // ─── Permissions Flow ───
+  static Future<bool> isPermissionsFlowComplete() async {
+    final p = await prefs;
+    return p.getBool(StorageKeys.permissionsFlowComplete) ?? false;
+  }
+
+  static Future<void> setPermissionsFlowComplete(bool complete) async {
+    final p = await prefs;
+    await p.setBool(StorageKeys.permissionsFlowComplete, complete);
+  }
+
   // ─── Selected Reciter ───
   static Future<String> getSelectedReciter() async {
     final p = await prefs;

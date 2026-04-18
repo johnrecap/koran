@@ -155,7 +155,8 @@ class AppLocalizations {
       'searchingTopics': 'جارٍ البحث عن المواضيع...',
       'noSmartResults': 'لم يتم العثور على آيات مطابقة لهذا الموضوع.',
       'smartSearchHint': 'ابحث بمفهوم أو موضوع أو سؤال.',
-      'fallbackToKeyword': 'البحث الذكي غير متاح بدون اتصال. عرض نتائج الكلمات المفتاحية بدلاً من ذلك.',
+      'fallbackToKeyword':
+          'البحث الذكي غير متاح بدون اتصال. عرض نتائج الكلمات المفتاحية بدلاً من ذلك.',
       'searchTopicPlaceholder': 'ابحث عن موضوع قرآني...',
       'verseContext': 'سياق الآية',
       'contextAndConnection': 'السياق والترابط',
@@ -198,6 +199,18 @@ class AppLocalizations {
       'storiesStartReading': 'ابدأ القراءة',
       'storiesOpenInReader': 'افتح في القارئ',
       'storiesShareUnavailable': 'تعذرت مشاركة هذا الفصل الآن.',
+      'permissionsTitle': 'الأذونات',
+      'permissionsSubtitle': 'نحتاج بعض الأذونات لتقديم أفضل تجربة لك',
+      'permissionsNotificationTitle': 'الإشعارات',
+      'permissionsNotificationDesc':
+          'تلقّ إشعارات أوقات الأذان والأذكار اليومية',
+      'permissionsLocationTitle': 'الموقع',
+      'permissionsLocationDesc': 'تحديد مواقيت الصلاة بدقة حسب موقعك الحالي',
+      'permissionsAllow': 'السماح',
+      'permissionsSkip': 'تخطي',
+      'permissionsContinue': 'متابعة',
+      'permissionsGranted': 'تم السماح',
+      'permissionsDenied': 'تم الرفض',
     },
     'en': {
       'appTitle': 'Quran Kareem',
@@ -219,6 +232,12 @@ class AppLocalizations {
       'mushafMuallimDisable': 'Exit Mu\'allim mode',
       'mushafMuallimStartFromHere': 'Start Mu\'allim from here',
       'mushafMuallimCurrentAyah': 'Current ayah',
+      'mushafMuallimTimingLoadFallback':
+          'Unable to load word timing right now. Continuing with ayah-level sync.',
+      'mushafMuallimTimingUnavailable':
+          'Word timing is unavailable for this reciter.',
+      'mushafMuallimPlaybackError':
+          'Unable to continue Mu\'allim playback right now.',
       'verseActionTadabbur': 'Tadabbur',
       'verseMetadataUnavailable': 'Unable to load surah details right now.',
       'verseShareUnavailable': 'Unable to share this verse right now.',
@@ -877,6 +896,22 @@ class AppLocalizations {
       'notificationsReminderReviewTitle': 'Review queue',
       'notificationsReminderReviewBody':
           'Your next spaced review is ready in the memorization queue.',
+      'notificationsAdhanMuezzinMisharyAlafasy': 'Mishary Rashid Al-Afasy',
+      'notificationsAdhanMuezzinAhmedAlNafis': 'Ahmad Al-Nafees',
+      'notificationsAdhanMuezzinHafizMustafaOzcan': 'Hafiz Mustafa Özcan',
+      'notificationsAdhanMuezzinAlafasyDubai': 'Al-Afasy (Dubai One TV)',
+      'notificationsAdhanMuezzinAlafasyAlt': 'Al-Afasy (Alternative)',
+      'notificationsAdhanMuezzinMansourAlZahrani': 'Mansour Al-Zahrani',
+      'notificationsAdhanSectionTitle': 'Adhan Sound',
+      'notificationsAdhanPlaybackModeLabel': 'At prayer time',
+      'notificationsAdhanMuezzinLabel': 'Muezzin voice',
+      'notificationsAdhanPlaybackNotificationOnly': 'Notification only',
+      'notificationsAdhanPlaybackFullAdhan': 'Full Adhan',
+      'notificationsAdhanPlaybackTakbeerOnly': 'Takbeer only',
+      'notificationsAdhanDownloading': 'Downloading...',
+      'notificationsAdhanDownloaded': 'Downloaded',
+      'notificationsAdhanDownloadFailed': 'Download failed',
+      'notificationsAdhanPreview': 'Preview',
       'prayerDetailsTitle': 'Prayer Details',
       'prayerDetailsLoadingMonth': 'Loading Hijri month...',
       'prayerDetailsError': 'Unable to load this Hijri month right now.',
@@ -968,10 +1003,28 @@ class AppLocalizations {
       'storiesStartReading': 'Start reading',
       'storiesOpenInReader': 'Open in reader',
       'storiesShareUnavailable': 'Unable to share this chapter right now.',
+      'permissionsTitle': 'Permissions',
+      'permissionsSubtitle':
+          'We need a few permissions to give you the best experience',
+      'permissionsNotificationTitle': 'Notifications',
+      'permissionsNotificationDesc':
+          'Receive Azan time alerts and daily Adhkar reminders',
+      'permissionsLocationTitle': 'Location',
+      'permissionsLocationDesc':
+          'Determine accurate prayer times based on your current location',
+      'permissionsAllow': 'Allow',
+      'permissionsSkip': 'Skip',
+      'permissionsContinue': 'Continue',
+      'permissionsGranted': 'Granted',
+      'permissionsDenied': 'Denied',
     },
   };
 
   static const Map<String, String> _arabicOverrides = {
+    'mushafMuallimTimingLoadFallback':
+        'تعذر تحميل توقيت الكلمات الآن. سنواصل بالمزامنة على مستوى الآية.',
+    'mushafMuallimTimingUnavailable': 'توقيت الكلمات غير متاح لهذا القارئ.',
+    'mushafMuallimPlaybackError': 'تعذر متابعة تشغيل المصحف المعلّم الآن.',
     'quizProgress': '{current} / {total}',
     'quizCompleteThe': 'أكمل الآية',
     'quizWhatMeans': 'ما معنى هذه الكلمة؟',
@@ -1042,7 +1095,7 @@ class AppLocalizations {
     'quizResultCardExportUnavailable': 'تعذر تجهيز هذه البطاقة الآن.',
     'quizResultCardSavePermissionDenied':
         'تم رفض إذن الصور. سيتم فتح ورقة المشاركة بدلًا من ذلك.',
-    'memorizationQuizAction': 'ط§ظ„ظ…ط³ط§ط¨ظ‚ط§طھ',
+    'memorizationQuizAction': 'المسابقات',
     'quizHubDescription': 'اختر نوع المسابقة واضبط الجلسة قبل أن تبدأ.',
     'quizStart': 'ابدأ',
     'quizResultScore': 'النتيجة',
@@ -1057,7 +1110,7 @@ class AppLocalizations {
     'quizHistoryScore': 'النتيجة',
     'quizHistoryDifficulty': 'الصعوبة',
     'quizMistakesBadge': 'الأخطاء',
-    'verseActionTadabbur': '????',
+    'verseActionTadabbur': 'تدبّر',
     'ayahShareCardTitle': 'بطاقة مشاركة الآية',
     'ayahShareCardSubtitle': 'اختر قالبًا وراجع البطاقة قبل المشاركة.',
     'ayahShareCardShareAction': 'مشاركة الصورة',
@@ -1464,6 +1517,22 @@ class AppLocalizations {
     'notificationsReminderReviewTitle': 'طابور المراجعة',
     'notificationsReminderReviewBody':
         'مراجعتك المتباعدة التالية جاهزة داخل طابور الحفظ.',
+    'notificationsAdhanMuezzinMisharyAlafasy': 'مشاري راشد العفاسي',
+    'notificationsAdhanMuezzinAhmedAlNafis': 'أحمد النفيس',
+    'notificationsAdhanMuezzinHafizMustafaOzcan': 'حافظ مصطفى أوزجان',
+    'notificationsAdhanMuezzinAlafasyDubai': 'العفاسي (دبي ون)',
+    'notificationsAdhanMuezzinAlafasyAlt': 'العفاسي (بديل)',
+    'notificationsAdhanMuezzinMansourAlZahrani': 'منصور الزهراني',
+    'notificationsAdhanSectionTitle': 'صوت الأذان',
+    'notificationsAdhanPlaybackModeLabel': 'عند وقت الصلاة',
+    'notificationsAdhanMuezzinLabel': 'صوت المؤذن',
+    'notificationsAdhanPlaybackNotificationOnly': 'تنبيه فقط',
+    'notificationsAdhanPlaybackFullAdhan': 'أذان كامل',
+    'notificationsAdhanPlaybackTakbeerOnly': 'تكبير فقط',
+    'notificationsAdhanDownloading': 'جارٍ التحميل...',
+    'notificationsAdhanDownloaded': 'تم التحميل',
+    'notificationsAdhanDownloadFailed': 'فشل التحميل',
+    'notificationsAdhanPreview': 'معاينة',
     'prayerDetailsTitle': 'تفاصيل الصلاة',
     'prayerDetailsLoadingMonth': 'جارٍ تحميل الشهر الهجري...',
     'prayerDetailsError': 'تعذر تحميل هذا الشهر الهجري الآن.',
@@ -1563,10 +1632,13 @@ class AppLocalizations {
   String get mushafMuallimTitle => _value('mushafMuallimTitle');
   String get mushafMuallimEnable => _value('mushafMuallimEnable');
   String get mushafMuallimDisable => _value('mushafMuallimDisable');
-  String get mushafMuallimStartFromHere =>
-      _value('mushafMuallimStartFromHere');
-  String get mushafMuallimCurrentAyah =>
-      _value('mushafMuallimCurrentAyah');
+  String get mushafMuallimStartFromHere => _value('mushafMuallimStartFromHere');
+  String get mushafMuallimCurrentAyah => _value('mushafMuallimCurrentAyah');
+  String get mushafMuallimTimingLoadFallback =>
+      _value('mushafMuallimTimingLoadFallback');
+  String get mushafMuallimTimingUnavailable =>
+      _value('mushafMuallimTimingUnavailable');
+  String get mushafMuallimPlaybackError => _value('mushafMuallimPlaybackError');
   String get verseActionTadabbur => _value('verseActionTadabbur');
   String get verseMetadataUnavailable => _value('verseMetadataUnavailable');
   String get verseShareUnavailable => _value('verseShareUnavailable');
@@ -2528,6 +2600,38 @@ class AppLocalizations {
       _value('notificationsReminderReviewTitle');
   String get notificationsReminderReviewBody =>
       _value('notificationsReminderReviewBody');
+  String get notificationsAdhanMuezzinMisharyAlafasy =>
+      _value('notificationsAdhanMuezzinMisharyAlafasy');
+  String get notificationsAdhanMuezzinAhmedAlNafis =>
+      _value('notificationsAdhanMuezzinAhmedAlNafis');
+  String get notificationsAdhanMuezzinHafizMustafaOzcan =>
+      _value('notificationsAdhanMuezzinHafizMustafaOzcan');
+  String get notificationsAdhanMuezzinAlafasyDubai =>
+      _value('notificationsAdhanMuezzinAlafasyDubai');
+  String get notificationsAdhanMuezzinAlafasyAlt =>
+      _value('notificationsAdhanMuezzinAlafasyAlt');
+  String get notificationsAdhanMuezzinMansourAlZahrani =>
+      _value('notificationsAdhanMuezzinMansourAlZahrani');
+  String get notificationsAdhanSectionTitle =>
+      _value('notificationsAdhanSectionTitle');
+  String get notificationsAdhanPlaybackModeLabel =>
+      _value('notificationsAdhanPlaybackModeLabel');
+  String get notificationsAdhanMuezzinLabel =>
+      _value('notificationsAdhanMuezzinLabel');
+  String get notificationsAdhanPlaybackNotificationOnly =>
+      _value('notificationsAdhanPlaybackNotificationOnly');
+  String get notificationsAdhanPlaybackFullAdhan =>
+      _value('notificationsAdhanPlaybackFullAdhan');
+  String get notificationsAdhanPlaybackTakbeerOnly =>
+      _value('notificationsAdhanPlaybackTakbeerOnly');
+  String get notificationsAdhanDownloading =>
+      _value('notificationsAdhanDownloading');
+  String get notificationsAdhanDownloaded =>
+      _value('notificationsAdhanDownloaded');
+  String get notificationsAdhanDownloadFailed =>
+      _value('notificationsAdhanDownloadFailed');
+  String get notificationsAdhanPreview =>
+      _value('notificationsAdhanPreview');
   String get prayerDetailsTitle => _value('prayerDetailsTitle');
   String get prayerDetailsLoadingMonth => _value('prayerDetailsLoadingMonth');
   String get prayerDetailsError => _value('prayerDetailsError');
@@ -2591,6 +2695,7 @@ class AppLocalizations {
         .replaceAll('{remaining}', remaining)
         .replaceAll('{total}', total);
   }
+
   String aiQuotaRemainingFormat(String remaining, String total) {
     return _value('aiQuotaRemainingFormat')
         .replaceAll('{remaining}', remaining)
@@ -2642,6 +2747,21 @@ class AppLocalizations {
   String get storiesStartReading => _value('storiesStartReading');
   String get storiesOpenInReader => _value('storiesOpenInReader');
   String get storiesShareUnavailable => _value('storiesShareUnavailable');
+
+  // ─── Permissions Flow ───
+  String get permissionsTitle => _value('permissionsTitle');
+  String get permissionsSubtitle => _value('permissionsSubtitle');
+  String get permissionsNotificationTitle =>
+      _value('permissionsNotificationTitle');
+  String get permissionsNotificationDesc =>
+      _value('permissionsNotificationDesc');
+  String get permissionsLocationTitle => _value('permissionsLocationTitle');
+  String get permissionsLocationDesc => _value('permissionsLocationDesc');
+  String get permissionsAllow => _value('permissionsAllow');
+  String get permissionsSkip => _value('permissionsSkip');
+  String get permissionsContinue => _value('permissionsContinue');
+  String get permissionsGranted => _value('permissionsGranted');
+  String get permissionsDenied => _value('permissionsDenied');
 }
 
 class _AppLocalizationsDelegate

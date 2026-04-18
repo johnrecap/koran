@@ -25,13 +25,13 @@ void main() {
   });
 
   group('AyahTimingData', () {
-    final ayah = AyahTimingData(
+    const ayah = AyahTimingData(
       verseKey: '1:1',
       surahNumber: 1,
       ayahNumber: 1,
       timestampFrom: 0,
       timestampTo: 6000,
-      segments: const [
+      segments: [
         WordTimingSegment(wordIndex: 0, startMs: 0, endMs: 1000),
         WordTimingSegment(wordIndex: 1, startMs: 1001, endMs: 2500),
         WordTimingSegment(wordIndex: 2, startMs: 2501, endMs: 4000),
@@ -74,7 +74,7 @@ void main() {
   });
 
   group('SurahTimingData', () {
-    final surah = SurahTimingData(
+    const surah = SurahTimingData(
       surahNumber: 1,
       reciterId: 'Abdul_Basit_Murattal_192kbps',
       audioUrl: 'https://example.com/surah.mp3',
@@ -86,7 +86,7 @@ void main() {
           ayahNumber: 1,
           timestampFrom: 0,
           timestampTo: 5000,
-          segments: const [
+          segments: [
             WordTimingSegment(wordIndex: 0, startMs: 0, endMs: 2000),
           ],
         ),
@@ -96,7 +96,7 @@ void main() {
           ayahNumber: 2,
           timestampFrom: 5001,
           timestampTo: 10000,
-          segments: const [],
+          segments: [],
         ),
       ],
     );

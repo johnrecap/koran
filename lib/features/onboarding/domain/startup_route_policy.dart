@@ -1,5 +1,6 @@
 enum StartupRouteTarget {
   onboarding('/onboarding'),
+  permissions('/permissions'),
   mushafSetup('/setup-mushaf'),
   library('/library');
 
@@ -11,6 +12,7 @@ enum StartupRouteTarget {
 abstract final class StartupRoutePolicy {
   static StartupRouteTarget resolve({
     required bool isOnboardingComplete,
+    required bool isPermissionsFlowComplete,
     required bool isMushafSetupComplete,
   }) {
     if (!isOnboardingComplete) {
@@ -18,13 +20,18 @@ abstract final class StartupRoutePolicy {
     }
 
     return resolveAfterOnboarding(
+      isPermissionsFlowComplete: isPermissionsFlowComplete,
       isMushafSetupComplete: isMushafSetupComplete,
     );
   }
 
   static StartupRouteTarget resolveAfterOnboarding({
+    required bool isPermissionsFlowComplete,
     required bool isMushafSetupComplete,
   }) {
+    if (!isPermissionsFlowComplete) {
+      return StartupRouteTarget.permissions;
+    }
     return isMushafSetupComplete
         ? StartupRouteTarget.library
         : StartupRouteTarget.mushafSetup;

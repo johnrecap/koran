@@ -4,7 +4,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:quran_kareem/features/reader/data/word_timing_remote_data_source.dart';
-import 'package:quran_kareem/features/reader/domain/word_timing_models.dart';
 
 // Minimal valid API response for surah 1 with Basit (ID 1)
 Map<String, dynamic> _buildApiResponse({

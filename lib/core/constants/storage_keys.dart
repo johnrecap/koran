@@ -12,6 +12,7 @@ abstract final class StorageKeys {
   static const String onboardingComplete = 'onboardingComplete';
   static const String mushafSetupComplete = 'mushafSetupComplete';
   static const String selectedReciter = 'selectedReciter';
+  static const String muallimResumeSession = 'muallim_resume_session';
 
   static const String dataSchemaVersion = 'data_schema_version';
 
@@ -37,4 +38,5 @@ abstract final class StorageKeys {
   static const String aiUsageLog = 'ai_usage_log';
   static const String storyProgress = 'story_progress';
   static const String storyBookmarks = 'story_bookmarks';
+  static const String permissionsFlowComplete = 'permissionsFlowComplete';
 }

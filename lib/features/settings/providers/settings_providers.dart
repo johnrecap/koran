@@ -31,6 +31,17 @@ class AppSettingsController extends Notifier<AppSettingsState> {
     return ref.watch(appSettingsInitialStateProvider);
   }
 
+  /// Atomically replaces the full settings state without persisting.
+  ///
+  /// Used by the SplashScreen to inject fully-loaded settings from
+  /// [AppBootstrapService] without re-writing values we just read from
+  /// SharedPreferences. This avoids unnecessary disk writes and triggers
+  /// only one provider rebuild instead of 3-4 individual setter calls.
+  void replaceState(AppSettingsState fullSettings) {
+    state = fullSettings;
+    ref.read(settingsRuntimeSyncProvider).sync(fullSettings);
+  }
+
   Future<void> setThemeMode(ThemeMode themeMode) async {
     if (state.themeMode == themeMode) {
       return;

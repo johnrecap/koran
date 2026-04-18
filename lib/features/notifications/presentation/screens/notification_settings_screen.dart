@@ -9,6 +9,7 @@ import 'package:quran_kareem/features/notifications/domain/notification_reminder
 import 'package:quran_kareem/features/notifications/presentation/widgets/notification_family_tile.dart';
 import 'package:quran_kareem/features/notifications/presentation/widgets/notification_permission_card.dart';
 import 'package:quran_kareem/features/notifications/presentation/widgets/notification_time_picker_tile.dart';
+import 'package:quran_kareem/features/notifications/presentation/widgets/adhan_sound_picker.dart';
 import 'package:quran_kareem/features/notifications/providers/notification_providers.dart';
 import 'package:quran_kareem/features/settings/presentation/widgets/settings_section_card.dart';
 
@@ -181,6 +182,9 @@ class NotificationSettingsScreen extends ConsumerWidget {
                     ),
                   ),
                 ),
+                const SizedBox(height: 14),
+                // ── Adhan settings (visible when prayer toggle is on) ──
+                if (preferences.prayer.enabled) const AdhanSoundPicker(),
                 const SizedBox(height: 14),
                 NotificationFamilyTile(
                   key: const Key('notification-family-review'),

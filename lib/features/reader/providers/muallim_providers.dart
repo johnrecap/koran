@@ -1,11 +1,14 @@
 import 'dart:async';
 
+import 'package:quran_kareem/core/constants/app_constants.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:quran_kareem/core/utils/app_logger.dart';
 import 'package:quran_kareem/features/reader/data/muallim_ayah_audio_service.dart';
+import 'package:quran_kareem/features/reader/data/muallim_session_store.dart';
 import 'package:quran_kareem/features/reader/data/package_muallim_ayah_audio_service.dart';
+import 'package:quran_kareem/features/reader/data/reciter_id_mapping.dart';
 import 'package:quran_kareem/features/reader/data/word_timing_cache_data_source.dart';
 import 'package:quran_kareem/features/reader/data/word_timing_remote_data_source.dart';
 import 'package:quran_kareem/features/reader/domain/muallim_models.dart';
@@ -15,11 +18,16 @@ import 'package:quran_kareem/features/reader/domain/word_timing_models.dart';
 import 'package:quran_kareem/features/reader/providers/reader_providers.dart';
 import 'package:quran_library/quran_library.dart';
 
-final muallimAyahAudioServiceProvider = Provider<MuallimAyahAudioService>((ref) {
+final muallimAyahAudioServiceProvider =
+    Provider<MuallimAyahAudioService>((ref) {
   final service = PackageMuallimAyahAudioService();
   ref.onDispose(service.dispose);
   return service;
 });
+
+final muallimSessionStoreProvider = Provider<MuallimSessionStore>(
+  (ref) => const SharedPreferencesMuallimSessionStore(),
+);
 
 // ─── Wave 2: Word Timing Providers ───────────────────────────────────────────
 
@@ -87,6 +95,7 @@ final muallimStateProvider =
     ref.watch(muallimAyahAudioServiceProvider),
     ref.read(muallimWordTimingCacheProvider),
     ref.read(muallimWordTimingRemoteProvider),
+    ref.read(muallimSessionStoreProvider),
   );
 });
 
@@ -156,6 +165,7 @@ class MuallimNotifier extends StateNotifier<MuallimSnapshot> {
     this._service,
     this._timingCache,
     this._timingRemote,
+    this._sessionStore,
   ) : super(const MuallimSnapshot.initial()) {
     _subscription = _service.snapshots.listen(_applyPlaybackSnapshot);
     unawaited(_bootstrap());
@@ -164,6 +174,7 @@ class MuallimNotifier extends StateNotifier<MuallimSnapshot> {
   final MuallimAyahAudioService _service;
   final WordTimingCacheDataSource _timingCache;
   final WordTimingRemoteDataSource _timingRemote;
+  final MuallimSessionStore _sessionStore;
   StreamSubscription<MuallimPlaybackSnapshot>? _subscription;
 
   /// Cached timing for the currently-loaded surah.
@@ -182,7 +193,18 @@ class MuallimNotifier extends StateNotifier<MuallimSnapshot> {
   }
 
   Future<void> enable() async {
-    state = state.copyWith(isEnabled: true);
+    try {
+      final playback = await _service.ensureInitialized();
+      _applyPlaybackSnapshot(playback);
+      await _restoreResumeSession();
+      state = state.copyWith(isEnabled: true);
+    } catch (error, stackTrace) {
+      AppLogger.error('MuallimNotifier.enable', error, stackTrace);
+      state = state.copyWith(
+        isEnabled: true,
+        playbackState: MuallimPlaybackState.error,
+      );
+    }
   }
 
   Future<void> disable() async {
@@ -194,6 +216,8 @@ class MuallimNotifier extends StateNotifier<MuallimSnapshot> {
       clearCurrentAyah: true,
       position: Duration.zero,
       duration: Duration.zero,
+      timingStatus: MuallimTimingStatus.idle,
+      clearWordIndex: true,
     );
   }
 
@@ -202,6 +226,7 @@ class MuallimNotifier extends StateNotifier<MuallimSnapshot> {
     BuildContext? context,
     bool isDarkMode = false,
   }) async {
+    final playbackContext = context;
     await enable();
     state = state.copyWith(
       playbackState: MuallimPlaybackState.loading,
@@ -210,6 +235,7 @@ class MuallimNotifier extends StateNotifier<MuallimSnapshot> {
       duration: Duration.zero,
       clearWordIndex: true,
     );
+    unawaited(_persistResumeSession(ayah: ayah));
 
     // Pre-fetch timing data for the new surah+reciter in the background.
     unawaited(
@@ -220,9 +246,12 @@ class MuallimNotifier extends StateNotifier<MuallimSnapshot> {
     );
 
     try {
+      if (playbackContext != null && !playbackContext.mounted) {
+        return;
+      }
       await _service.playFromAyah(
         ayah,
-        context: context,
+        context: playbackContext,
         isDarkMode: isDarkMode,
       );
     } catch (error, stackTrace) {
@@ -236,8 +265,8 @@ class MuallimNotifier extends StateNotifier<MuallimSnapshot> {
     BuildContext? context,
     bool isDarkMode = false,
   }) async {
-    final ayahUQNumber =
-        QuranCtrl.instance.getAyahUQBySurahAndAyah(target.surahNumber, target.ayahNumber);
+    final ayahUQNumber = QuranCtrl.instance
+        .getAyahUQBySurahAndAyah(target.surahNumber, target.ayahNumber);
     if (ayahUQNumber == null) {
       state = state.copyWith(playbackState: MuallimPlaybackState.error);
       return;
@@ -274,8 +303,7 @@ class MuallimNotifier extends StateNotifier<MuallimSnapshot> {
     }
 
     final currentAyah = state.currentAyah;
-    if (currentAyah != null &&
-        state.playbackState != MuallimPlaybackState.error) {
+    if (currentAyah != null) {
       await startFromAyah(
         currentAyah,
         context: context,
@@ -323,6 +351,7 @@ class MuallimNotifier extends StateNotifier<MuallimSnapshot> {
         clearCurrentAyah: true,
         position: Duration.zero,
         duration: Duration.zero,
+        clearWordIndex: true,
       );
     } catch (error, stackTrace) {
       AppLogger.error('MuallimNotifier.stop', error, stackTrace);
@@ -367,6 +396,7 @@ class MuallimNotifier extends StateNotifier<MuallimSnapshot> {
       );
       final playback = await _service.ensureInitialized();
       _applyPlaybackSnapshot(playback);
+      unawaited(_persistResumeSession());
     } catch (error, stackTrace) {
       AppLogger.error('MuallimNotifier.selectReciter', error, stackTrace);
       state = state.copyWith(playbackState: MuallimPlaybackState.error);
@@ -380,6 +410,11 @@ class MuallimNotifier extends StateNotifier<MuallimSnapshot> {
     // When the surah or reciter changes, kick off a timing fetch.
     final surahChanged = newAyah?.surahNumber != prevAyah?.surahNumber;
     final reciterChanged = playback.currentReciterId != state.currentReciterId;
+    final shouldPersistSession = newAyah != null &&
+        playback.currentReciterId.isNotEmpty &&
+        (surahChanged ||
+            reciterChanged ||
+            newAyah.ayahNumber != prevAyah?.ayahNumber);
     if ((surahChanged || reciterChanged) &&
         newAyah != null &&
         playback.currentReciterId.isNotEmpty) {
@@ -390,16 +425,28 @@ class MuallimNotifier extends StateNotifier<MuallimSnapshot> {
         ),
       );
     }
+    if (shouldPersistSession) {
+      unawaited(
+        _persistResumeSession(
+          ayah: newAyah,
+          reciterId: playback.currentReciterId,
+          reciterName: playback.currentReciterName,
+        ),
+      );
+    }
 
     // Resolve word index from current timing data.
     final wordIndex = _resolveWordIndex(
       positionMs: playback.position.inMilliseconds,
+      surahNumber: newAyah?.surahNumber,
       ayahNumber: newAyah?.ayahNumber,
+      reciterId: playback.currentReciterId,
     );
 
     state = MuallimSnapshot.fromPlayback(
       playback,
       isEnabled: state.isEnabled,
+      timingStatus: state.timingStatus,
       currentWordIndex: wordIndex,
     );
   }
@@ -410,14 +457,34 @@ class MuallimNotifier extends StateNotifier<MuallimSnapshot> {
     required int surahNumber,
     required String reciterId,
   }) async {
-    if (_loadedTimingSurahNumber == surahNumber &&
-        _loadedTimingReciterId == reciterId) {
-      return; // Already loaded for this surah+reciter combination.
+    if (reciterId.isEmpty) {
+      state = state.copyWith(
+        timingStatus: MuallimTimingStatus.idle,
+        clearWordIndex: true,
+      );
+      return;
+    }
+
+    if (_shouldSkipTimingLoad(surahNumber: surahNumber, reciterId: reciterId)) {
+      return;
     }
 
     _loadedTimingSurahNumber = surahNumber;
     _loadedTimingReciterId = reciterId;
     _currentSurahTiming = null; // Clear stale data while fetching.
+
+    if (!ReciterIdMapping.hasTimingSupport(reciterId)) {
+      state = state.copyWith(
+        timingStatus: MuallimTimingStatus.unmappedReciter,
+        clearWordIndex: true,
+      );
+      return;
+    }
+
+    state = state.copyWith(
+      timingStatus: MuallimTimingStatus.loading,
+      clearWordIndex: true,
+    );
 
     try {
       // Cache-first lookup.
@@ -425,8 +492,19 @@ class MuallimNotifier extends StateNotifier<MuallimSnapshot> {
         surahNumber: surahNumber,
         reciterId: reciterId,
       );
+      if (!mounted) {
+        return;
+      }
       if (cached != null) {
         _currentSurahTiming = cached;
+        _syncTimingStateFromLoadedData(cached);
+        unawaited(
+          _prefetchNextSurahTiming(
+            currentSurahNumber: surahNumber,
+            reciterId: reciterId,
+            currentTiming: cached,
+          ),
+        );
         return;
       }
 
@@ -436,10 +514,63 @@ class MuallimNotifier extends StateNotifier<MuallimSnapshot> {
         readerNamePath: reciterId,
       );
       await _timingCache.put(data);
+      if (!mounted) {
+        return;
+      }
       _currentSurahTiming = data;
+      _syncTimingStateFromLoadedData(data);
+      unawaited(
+        _prefetchNextSurahTiming(
+          currentSurahNumber: surahNumber,
+          reciterId: reciterId,
+          currentTiming: data,
+        ),
+      );
     } catch (e, st) {
       AppLogger.error('MuallimNotifier._ensureTimingLoaded', e, st);
-      // Leave _currentSurahTiming as null — ayah-level highlight fallback.
+      if (!mounted) {
+        return;
+      }
+      state = state.copyWith(
+        timingStatus: MuallimTimingStatus.loadError,
+        clearWordIndex: true,
+      );
+    }
+  }
+
+  Future<void> _prefetchNextSurahTiming({
+    required int currentSurahNumber,
+    required String reciterId,
+    required SurahTimingData currentTiming,
+  }) async {
+    if (!currentTiming.isAvailable || !currentTiming.hasWordSegments) {
+      return;
+    }
+    if (!ReciterIdMapping.hasTimingSupport(reciterId)) {
+      return;
+    }
+
+    final nextSurahNumber = currentSurahNumber + 1;
+    if (nextSurahNumber > AppConstants.totalSurahs) {
+      return;
+    }
+
+    try {
+      final cached = await _timingCache.get(
+        surahNumber: nextSurahNumber,
+        reciterId: reciterId,
+      );
+      if (cached != null) {
+        return;
+      }
+
+      final data = await _timingRemote.fetchSurahTimings(
+        surahNumber: nextSurahNumber,
+        readerNamePath: reciterId,
+      );
+      await _timingCache.put(data);
+    } catch (e, st) {
+      AppLogger.error('MuallimNotifier._prefetchNextSurahTiming', e, st);
     }
   }
 
@@ -447,16 +578,121 @@ class MuallimNotifier extends StateNotifier<MuallimSnapshot> {
   /// or null if timing data is unavailable / no word matches.
   int? _resolveWordIndex({
     required int positionMs,
+    required int? surahNumber,
     required int? ayahNumber,
+    required String reciterId,
   }) {
-    if (ayahNumber == null) return null;
+    if (surahNumber == null || ayahNumber == null) return null;
     final timing = _currentSurahTiming;
     if (timing == null || !timing.isAvailable) return null;
+    if (_loadedTimingSurahNumber != surahNumber ||
+        _loadedTimingReciterId != reciterId) {
+      return null;
+    }
 
     final ayahData = timing.forAyah(ayahNumber);
     if (ayahData == null || !ayahData.hasWordSegments) return null;
 
     return ayahData.activeWordIndexAt(positionMs);
+  }
+
+  bool _shouldSkipTimingLoad({
+    required int surahNumber,
+    required String reciterId,
+  }) {
+    final isSameTarget = _loadedTimingSurahNumber == surahNumber &&
+        _loadedTimingReciterId == reciterId;
+    if (!isSameTarget) {
+      return false;
+    }
+
+    return state.timingStatus != MuallimTimingStatus.idle &&
+        state.timingStatus != MuallimTimingStatus.loadError;
+  }
+
+  MuallimTimingStatus _timingStatusForData(SurahTimingData data) {
+    if (!data.isAvailable || !data.hasWordSegments) {
+      return MuallimTimingStatus.unavailable;
+    }
+    return MuallimTimingStatus.available;
+  }
+
+  void _syncTimingStateFromLoadedData(SurahTimingData data) {
+    if (!mounted) {
+      return;
+    }
+    final wordIndex = _resolveWordIndex(
+      positionMs: state.position.inMilliseconds,
+      surahNumber: state.currentAyah?.surahNumber,
+      ayahNumber: state.currentAyah?.ayahNumber,
+      reciterId: state.currentReciterId,
+    );
+    state = state.copyWith(
+      timingStatus: _timingStatusForData(data),
+      currentWordIndex: wordIndex,
+      clearWordIndex: wordIndex == null,
+    );
+  }
+
+  Future<void> _restoreResumeSession() async {
+    final session = await _sessionStore.load();
+    if (!mounted || session == null) {
+      return;
+    }
+
+    if (session.reciterId.isNotEmpty &&
+        session.reciterId != state.currentReciterId) {
+      await _service.selectReciter(
+        session.reciterId,
+        restartPlayback: false,
+      );
+      if (!mounted) {
+        return;
+      }
+    }
+
+    final playback = await _service.ensureInitialized();
+    if (!mounted) {
+      return;
+    }
+    _applyPlaybackSnapshot(playback);
+    state = state.copyWith(
+      currentAyah: session.ayah,
+      playbackState: MuallimPlaybackState.idle,
+      position: Duration.zero,
+      duration: Duration.zero,
+      currentReciterId: session.reciterId,
+      currentReciterName: session.reciterName,
+      timingStatus: MuallimTimingStatus.idle,
+      clearWordIndex: true,
+    );
+    unawaited(
+      _ensureTimingLoaded(
+        surahNumber: session.ayah.surahNumber,
+        reciterId: session.reciterId,
+      ),
+    );
+  }
+
+  Future<void> _persistResumeSession({
+    MuallimAyahPosition? ayah,
+    String? reciterId,
+    String? reciterName,
+  }) async {
+    final resumeAyah = ayah ?? state.currentAyah;
+    final resumeReciterId = reciterId ?? state.currentReciterId;
+    final resumeReciterName = reciterName ?? state.currentReciterName;
+    if (resumeAyah == null || resumeReciterId.isEmpty) {
+      return;
+    }
+
+    await _sessionStore.save(
+      MuallimResumeSession(
+        ayah: resumeAyah,
+        reciterId: resumeReciterId,
+        reciterName: resumeReciterName,
+      ),
+    );
   }
 
   @override

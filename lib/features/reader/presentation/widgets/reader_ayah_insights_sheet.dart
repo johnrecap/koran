@@ -9,6 +9,8 @@ import 'package:quran_kareem/features/ai/features/simplify/ai_simplified_view.da
 import 'package:quran_kareem/features/ai/features/simplify/ai_simplify_button.dart';
 import 'package:quran_kareem/features/ai/features/simplify/tafsir_simplify_provider.dart';
 import 'package:quran_kareem/features/ai/providers/ai_providers.dart';
+import 'package:quran_kareem/features/audio/data/audio_hub_playback_service.dart';
+import 'package:quran_kareem/features/reader/domain/ayah_reader_sync_policy.dart';
 import 'package:quran_kareem/features/reader/domain/reader_ayah_insights_policy.dart';
 import 'package:quran_kareem/features/tafsir/domain/insight_section_models.dart';
 import 'package:quran_kareem/features/tafsir/domain/tafsir_browser_state.dart';
@@ -16,14 +18,31 @@ import 'package:quran_kareem/features/tafsir/providers/insight_section_providers
 import 'package:quran_library/quran_library.dart';
 
 class PackageReaderAyahPlaybackLauncher implements ReaderAyahPlaybackLauncher {
-  const PackageReaderAyahPlaybackLauncher();
+  const PackageReaderAyahPlaybackLauncher({
+    this.audioHubPlaybackService,
+  });
+
+  /// Optional hub service reference to stop any active surah session
+  /// before starting ayah playback, preventing audio conflicts.
+  final AudioHubPlaybackService? audioHubPlaybackService;
 
   @override
   Future<void> play(
     BuildContext context,
     ReaderAyahInsightsTarget target, {
     required bool isDark,
-  }) {
+  }) async {
+    // 1. Stop any active surah playback session to avoid audio conflicts
+    final hub = audioHubPlaybackService;
+    if (hub != null && hub.hasActiveSession) {
+      await hub.stop();
+    }
+
+    // 2. Sync ayah reader index to match the user's selected surah reciter
+    AyahReaderSyncPolicy.syncFromCurrentSurahReader();
+
+    // 3. Play the ayah (guard context after async gap)
+    if (!context.mounted) return;
     return AudioCtrl.instance.playAyah(
       context,
       target.ayahUQNumber,

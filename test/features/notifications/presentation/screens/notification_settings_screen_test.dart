@@ -242,4 +242,14 @@ class _FakeLocalNotificationsService implements LocalNotificationsService {
   }) async {
     familySchedules[reminderType] = schedules;
   }
+
+  @override
+  Future<void> scheduleMultiple(
+    List<ScheduledNotificationDescriptor> schedules,
+  ) async {
+    if (schedules.isEmpty) {
+      return;
+    }
+    familySchedules[schedules.first.reminderType] = schedules;
+  }
 }

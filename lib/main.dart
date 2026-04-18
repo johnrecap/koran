@@ -3,10 +3,11 @@ import 'dart:ui' show PlatformDispatcher;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:quran_library/quran_library.dart';
-import 'core/services/data_migration_service.dart';
+import 'core/services/app_bootstrap_service.dart';
 import 'core/services/error_reporting_service.dart';
 import 'core/localization/app_locale_policy.dart';
 import 'core/localization/app_localizations.dart';
@@ -15,21 +16,22 @@ import 'core/theme/app_theme_mode_policy.dart';
 import 'core/theme/app_theme.dart';
 import 'core/utils/app_logger.dart';
 import 'data/datasources/local/user_preferences.dart';
-import 'features/notifications/data/notification_timezone_service.dart';
-import 'features/notifications/data/local_notifications_service.dart';
-import 'features/notifications/data/package_local_notifications_service.dart';
 import 'features/notifications/domain/notification_launch_target.dart';
 import 'features/notifications/domain/notification_payload_codec.dart';
 import 'features/notifications/domain/notification_reader_launch_policy.dart';
 import 'features/notifications/providers/notification_providers.dart';
-import 'features/premium/data/premium_purchases_service.dart';
 import 'features/premium/providers/premium_providers.dart';
+import 'features/prayer/providers/prayer_providers.dart';
 import 'features/reader/providers/reader_providers.dart';
 import 'features/reader/domain/reader_session_intent.dart';
 import 'features/settings/providers/settings_providers.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  // ─── Critical path: preserve the native splash ───
+  final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+
+  // ─── Error handlers (lightweight, synchronous) ───
   ErrorReporting.install(const NoopErrorReportingService());
   FlutterError.onError = (details) {
     FlutterError.presentError(details);
@@ -48,57 +50,41 @@ Future<void> main() async {
     return true;
   };
 
-  await QuranLibrary.init();
-  await DataMigrationService().run();
-  final preferenceResults = await Future.wait<Object?>([
+  // ─── Fast-path: only read theme + locale for the first frame ───
+  final quickPrefs = await Future.wait<Object?>([
     UserPreferences.getThemeMode(),
     UserPreferences.getLanguage(),
-    UserPreferences.getArabicFontSize(),
-    UserPreferences.getReaderMode(),
-    UserPreferences.isTajweedEnabled(),
-    UserPreferences.isNightReaderAutoEnableEnabled(),
-    UserPreferences.getNightReaderStartMinutes(),
-    UserPreferences.getNightReaderEndMinutes(),
-    UserPreferences.getPreferredNightReaderStyle(),
   ]);
-  final initialSettings = AppSettingsState(
-    themeMode: AppThemeModePolicy.resolve(
-      preferenceResults[0]! as String,
-    ),
-    locale: AppLocalePolicy.resolve(
-      preferenceResults[1]! as String,
-    ),
-    arabicFontSize: preferenceResults[2]! as double,
-    defaultReaderMode: ReaderModePolicy.fromPreference(
-      preferenceResults[3]! as String,
-    ),
-    tajweedEnabled: preferenceResults[4]! as bool,
-    nightReaderSettings: NightReaderSettings(
-      autoEnable: preferenceResults[5]! as bool,
-      startMinutes: preferenceResults[6]! as int,
-      endMinutes: preferenceResults[7]! as int,
-      preferredStyle: preferenceResults[8]! as ReaderNightStyle,
-    ),
-  );
-  const QuranLibrarySettingsRuntimeSync().sync(initialSettings);
-  final notificationTimezoneService = DeviceNotificationTimezoneService();
-  final localNotificationsService = PackageLocalNotificationsService(
-    timezoneService: notificationTimezoneService,
-  );
-  final premiumPurchasesService = createDefaultPremiumPurchasesService();
-  await Future.wait<void>([
-    localNotificationsService.initialize(),
-    premiumPurchasesService.initialize(),
-  ]);
-  final initialNotificationLaunchTarget = await _loadInitialNotificationTarget(
-    localNotificationsService,
+
+  final themeMode = AppThemeModePolicy.resolve(quickPrefs[0]! as String);
+  final locale = AppLocalePolicy.resolve(quickPrefs[1]! as String);
+
+  // Cache so the full settings load doesn't re-read these
+  AppBootstrapService.instance.cacheThemeAndLocale(
+    themeMode: themeMode,
+    locale: locale,
   );
 
+  final minimalSettings = AppSettingsState(
+    themeMode: themeMode,
+    locale: locale,
+    // Safe defaults — will be replaced in SplashScreen after full init
+    arabicFontSize: 28.0,
+    defaultReaderMode: ReaderMode.page,
+    tajweedEnabled: true,
+    nightReaderSettings: const NightReaderSettings(
+      autoEnable: false,
+      startMinutes: 1200,
+      endMinutes: 360,
+      preferredStyle: ReaderNightStyle.night,
+    ),
+  );
+
+  // ─── Orientation + status bar (synchronous) ───
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
-
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
@@ -106,35 +92,15 @@ Future<void> main() async {
     ),
   );
 
+  // ─── Launch immediately — SplashScreen does heavy init ───
   runApp(
     ProviderScope(
       overrides: [
-        appSettingsInitialStateProvider.overrideWithValue(initialSettings),
-        notificationTimezoneServiceProvider
-            .overrideWithValue(notificationTimezoneService),
-        localNotificationsServiceProvider.overrideWithValue(
-          localNotificationsService,
-        ),
-        premiumPurchasesServiceProvider.overrideWithValue(
-          premiumPurchasesService,
-        ),
-        initialNotificationLaunchTargetProvider.overrideWithValue(
-          initialNotificationLaunchTarget,
-        ),
+        appSettingsInitialStateProvider.overrideWithValue(minimalSettings),
       ],
       child: const QuranKareemApp(),
     ),
   );
-}
-
-Future<NotificationLaunchTarget?> _loadInitialNotificationTarget(
-  LocalNotificationsService notificationsService,
-) async {
-  final payload = await notificationsService.getLaunchPayload();
-  if (payload == null || payload.isEmpty) {
-    return null;
-  }
-  return NotificationPayloadCodec.decodeOrFallback(payload);
 }
 
 class QuranKareemApp extends ConsumerWidget {
@@ -154,33 +120,96 @@ class QuranKareemApp extends ConsumerWidget {
       locale: settings.locale,
       supportedLocales: AppLocalizations.supportedLocales,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
-      builder: (context, child) => NotificationFeatureBridge(
+      builder: (context, child) => _PostBootstrapBridge(
         child: child ?? const SizedBox.shrink(),
       ),
     );
   }
 }
 
-class NotificationFeatureBridge extends ConsumerStatefulWidget {
-  const NotificationFeatureBridge({
-    super.key,
-    required this.child,
-  });
-
+/// A bridge widget that sets up notification listeners **only after**
+/// [AppBootstrapService] is initialized (i.e. after the SplashScreen
+/// completes its bootstrap).
+///
+/// Before bootstrap, it simply renders its child without wiring up
+/// any service-dependent listeners.
+class _PostBootstrapBridge extends ConsumerStatefulWidget {
+  const _PostBootstrapBridge({required this.child});
   final Widget child;
 
   @override
-  ConsumerState<NotificationFeatureBridge> createState() =>
-      _NotificationFeatureBridgeState();
+  ConsumerState<_PostBootstrapBridge> createState() =>
+      _PostBootstrapBridgeState();
 }
 
-class _NotificationFeatureBridgeState
-    extends ConsumerState<NotificationFeatureBridge> {
+class _PostBootstrapBridgeState extends ConsumerState<_PostBootstrapBridge>
+    with WidgetsBindingObserver {
   StreamSubscription<String>? _launchSubscription;
+  bool _isWired = false;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    // Listen for bootstrap completion to guarantee wiring fires,
+    // regardless of whether any watched providers changed.
+    AppBootstrapService.instance.bootstrapCompleted.addListener(
+      _onBootstrapCompleted,
+    );
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.resumed && _isWired) {
+      unawaited(
+        resyncNotificationsOnAppResume(
+          refreshPermission: () {
+            return ref
+                .read(notificationPermissionControllerProvider.notifier)
+                .refresh();
+          },
+          resyncAll: () {
+            return ref
+                .read(notificationPreferencesControllerProvider.notifier)
+                .resyncAll();
+          },
+          invalidatePrayerSnapshot: () {
+            ref.invalidate(homePrayerSnapshotProvider);
+          },
+        ),
+      );
+    }
+  }
+
+  void _onBootstrapCompleted() {
+    if (mounted && !_isWired && AppBootstrapService.instance.isInitialized) {
+      setState(() {});
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Wire up once bootstrap is complete
+    if (!_isWired && AppBootstrapService.instance.isInitialized) {
+      _isWired = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _wireNotificationListeners();
+      });
+    }
+
+    final pendingTarget = ref.watch(pendingNotificationLaunchTargetProvider);
+    if (pendingTarget != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        _consumePendingLaunchTarget(pendingTarget);
+      });
+    }
+
+    return widget.child;
+  }
+
+  void _wireNotificationListeners() {
     unawaited(
         ref.read(notificationPermissionControllerProvider.notifier).ready);
     unawaited(
@@ -197,29 +226,16 @@ class _NotificationFeatureBridgeState
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    AppBootstrapService.instance.bootstrapCompleted.removeListener(
+      _onBootstrapCompleted,
+    );
     _launchSubscription?.cancel();
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final pendingTarget = ref.watch(pendingNotificationLaunchTargetProvider);
-    if (pendingTarget != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted) {
-          return;
-        }
-        _consumePendingLaunchTarget(pendingTarget);
-      });
-    }
-
-    return widget.child;
-  }
-
   void _consumePendingLaunchTarget(NotificationLaunchTarget target) {
-    if (_isStartupGateActive()) {
-      return;
-    }
+    if (_isStartupGateActive()) return;
 
     switch (target.destination) {
       case NotificationLaunchDestination.library:
@@ -254,9 +270,7 @@ class _NotificationFeatureBridgeState
 
   Future<void> _openDailyWirdReader() async {
     final lastReadingPosition = await UserPreferences.getLastReadingPosition();
-    if (!mounted) {
-      return;
-    }
+    if (!mounted) return;
 
     final target = NotificationReaderLaunchPolicy.dailyWirdTarget(
       lastReadingPosition,

@@ -1,0 +1,25 @@
+# flutter_native_splash configuration
+# Background color matches the app's primaryDark (#1A3A2A)
+flutter_native_splash:
+  color: "#1A3A2A"
+
+  # Use the book icon as splash (will be generated as a simple branded image)
+  # Since we don't have a dedicated splash logo, use the app icon
+  image: assets/images/splash_icon.png
+
+  # Branding text at the bottom (optional)
+  # branding: assets/images/splash_branding.png
+
+  # Android 12+ specific settings
+  android_12:
+    color: "#1A3A2A"
+    image: assets/images/splash_icon.png
+
+  # iOS settings
+  ios: true
+  
+  # Web settings  
+  web: false
+
+  # Fullscreen mode
+  fullscreen: true

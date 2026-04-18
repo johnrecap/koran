@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:quran_kareem/data/datasources/local/user_preferences.dart';
+import 'package:quran_kareem/features/notifications/domain/adhan_muezzin.dart';
+import 'package:quran_kareem/features/notifications/domain/adhan_playback_mode.dart';
 import 'package:quran_kareem/features/prayer/domain/prayer_time_models.dart';
 import 'package:quran_kareem/features/notifications/data/notification_preferences_local_data_source.dart';
 import 'package:quran_kareem/features/notifications/domain/notification_preferences.dart';
@@ -23,6 +25,8 @@ void main() {
       ),
       prayer: NotificationReminderPreference(enabled: true),
       prayerReminderOffset: PrayerReminderOffset.thirtyMinBefore,
+      adhanPlaybackMode: AdhanPlaybackMode.fullAdhan,
+      selectedMuezzin: AdhanMuezzin.mansourAlZahrani,
       fridayKahf: NotificationReminderPreference(
         enabled: true,
         time: TimeOfDay(hour: 9, minute: 30),
@@ -55,6 +59,14 @@ void main() {
     expect(
       restored.prayerReminderOffset,
       PrayerReminderOffset.fifteenMinBefore,
+    );
+    expect(
+      restored.adhanPlaybackMode,
+      AdhanPlaybackMode.notificationOnly,
+    );
+    expect(
+      restored.selectedMuezzin,
+      AdhanMuezzin.misharyAlafasy,
     );
   });
 

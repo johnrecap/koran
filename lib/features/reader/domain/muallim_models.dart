@@ -2,6 +2,15 @@ import 'package:flutter/foundation.dart';
 
 enum MuallimPlaybackState { idle, loading, playing, paused, error }
 
+enum MuallimTimingStatus {
+  idle,
+  loading,
+  available,
+  unavailable,
+  loadError,
+  unmappedReciter,
+}
+
 @immutable
 class MuallimAyahPosition {
   const MuallimAyahPosition({
@@ -31,6 +40,60 @@ class MuallimAyahPosition {
   @override
   int get hashCode =>
       Object.hash(surahNumber, ayahNumber, ayahUQNumber, pageNumber);
+}
+
+@immutable
+class MuallimResumeSession {
+  const MuallimResumeSession({
+    required this.ayah,
+    required this.reciterId,
+    required this.reciterName,
+  });
+
+  final MuallimAyahPosition ayah;
+  final String reciterId;
+  final String reciterName;
+
+  Map<String, dynamic> toMap() {
+    return {
+      'ayah': {
+        'surahNumber': ayah.surahNumber,
+        'ayahNumber': ayah.ayahNumber,
+        'ayahUQNumber': ayah.ayahUQNumber,
+        'pageNumber': ayah.pageNumber,
+      },
+      'reciterId': reciterId,
+      'reciterName': reciterName,
+    };
+  }
+
+  factory MuallimResumeSession.fromMap(Map<String, dynamic> map) {
+    final ayahMap = Map<String, dynamic>.from(map['ayah'] as Map);
+    return MuallimResumeSession(
+      ayah: MuallimAyahPosition(
+        surahNumber: (ayahMap['surahNumber'] as num).toInt(),
+        ayahNumber: (ayahMap['ayahNumber'] as num).toInt(),
+        ayahUQNumber: (ayahMap['ayahUQNumber'] as num).toInt(),
+        pageNumber: (ayahMap['pageNumber'] as num).toInt(),
+      ),
+      reciterId: map['reciterId'] as String? ?? '',
+      reciterName: map['reciterName'] as String? ?? '',
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    return other is MuallimResumeSession &&
+        other.ayah == ayah &&
+        other.reciterId == reciterId &&
+        other.reciterName == reciterName;
+  }
+
+  @override
+  int get hashCode => Object.hash(ayah, reciterId, reciterName);
 }
 
 @immutable
@@ -119,6 +182,7 @@ class MuallimPlaybackSnapshot {
 class MuallimSnapshot extends MuallimPlaybackSnapshot {
   const MuallimSnapshot({
     required this.isEnabled,
+    required this.timingStatus,
     required super.playbackState,
     required super.currentAyah,
     required super.position,
@@ -130,15 +194,18 @@ class MuallimSnapshot extends MuallimPlaybackSnapshot {
 
   const MuallimSnapshot.initial()
       : isEnabled = false,
+        timingStatus = MuallimTimingStatus.idle,
         super.initial();
 
   factory MuallimSnapshot.fromPlayback(
     MuallimPlaybackSnapshot playback, {
     required bool isEnabled,
+    MuallimTimingStatus timingStatus = MuallimTimingStatus.idle,
     int? currentWordIndex,
   }) {
     return MuallimSnapshot(
       isEnabled: isEnabled,
+      timingStatus: timingStatus,
       playbackState: playback.playbackState,
       currentAyah: playback.currentAyah,
       position: playback.position,
@@ -150,10 +217,12 @@ class MuallimSnapshot extends MuallimPlaybackSnapshot {
   }
 
   final bool isEnabled;
+  final MuallimTimingStatus timingStatus;
 
   @override
   MuallimSnapshot copyWith({
     bool? isEnabled,
+    MuallimTimingStatus? timingStatus,
     MuallimPlaybackState? playbackState,
     MuallimAyahPosition? currentAyah,
     bool clearCurrentAyah = false,
@@ -166,6 +235,7 @@ class MuallimSnapshot extends MuallimPlaybackSnapshot {
   }) {
     return MuallimSnapshot(
       isEnabled: isEnabled ?? this.isEnabled,
+      timingStatus: timingStatus ?? this.timingStatus,
       playbackState: playbackState ?? this.playbackState,
       currentAyah: clearCurrentAyah ? null : (currentAyah ?? this.currentAyah),
       position: position ?? this.position,
@@ -184,12 +254,14 @@ class MuallimSnapshot extends MuallimPlaybackSnapshot {
     }
     return other is MuallimSnapshot &&
         other.isEnabled == isEnabled &&
+        other.timingStatus == timingStatus &&
         super == other;
   }
 
   @override
   int get hashCode => Object.hash(
         isEnabled,
+        timingStatus,
         super.hashCode,
       );
 }

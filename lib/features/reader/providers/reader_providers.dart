@@ -6,6 +6,7 @@ import 'package:quran_kareem/core/constants/app_constants.dart';
 import 'package:quran_kareem/data/datasources/local/quran_database.dart';
 import 'package:quran_kareem/data/datasources/local/user_preferences.dart';
 import 'package:quran_kareem/domain/entities/quran_entities.dart';
+import 'package:quran_kareem/features/audio/providers/audio_providers.dart';
 import 'package:quran_kareem/features/memorization/providers/memorization_providers.dart';
 import 'package:quran_kareem/features/reader/data/reader_save_recorder.dart';
 import 'package:quran_kareem/features/reader/data/reader_translation_remote_data_source.dart';
@@ -113,7 +114,9 @@ final readerTranslationRepositoryProvider =
 });
 
 final readerAyahPlaybackLauncherProvider = Provider<ReaderAyahPlaybackLauncher>(
-  (ref) => const PackageReaderAyahPlaybackLauncher(),
+  (ref) => PackageReaderAyahPlaybackLauncher(
+    audioHubPlaybackService: ref.watch(audioHubPlaybackServiceProvider),
+  ),
 );
 
 final readerAyahInsightsSheetLauncherProvider =

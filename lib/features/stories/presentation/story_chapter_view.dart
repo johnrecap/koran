@@ -66,9 +66,10 @@ class StoryChapterView extends StatelessWidget {
               textDirection: TextDirection.rtl,
               child: Text(
                 chapter.narrativeAr,
+                softWrap: true,
                 style: TextStyle(
                   fontFamily: 'Amiri',
-                  fontSize: 24,
+                  fontSize: 22,
                   height: 1.9,
                   color: isDark ? AppColors.textDark : AppColors.textLight,
                 ),

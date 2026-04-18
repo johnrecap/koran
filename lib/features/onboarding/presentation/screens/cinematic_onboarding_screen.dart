@@ -51,6 +51,7 @@ class _CinematicOnboardingScreenState
     await UserPreferences.setOnboardingComplete(true);
     final setupState = ref.read(mushafPreparationControllerProvider);
     final target = StartupRoutePolicy.resolveAfterOnboarding(
+      isPermissionsFlowComplete: false,
       isMushafSetupComplete: setupState.isCompleted,
     );
     if (mounted) {

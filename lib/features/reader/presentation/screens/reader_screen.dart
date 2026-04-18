@@ -22,6 +22,7 @@ import 'package:quran_kareem/features/reader/domain/reader_navigation_target.dar
 import 'package:quran_kareem/features/reader/domain/reader_session_intent.dart';
 import 'package:quran_kareem/features/reader/presentation/widgets/jump_to_dialog.dart';
 import 'package:quran_kareem/features/reader/presentation/widgets/muallim_playback_controls.dart';
+import 'package:quran_kareem/features/reader/presentation/widgets/muallim_word_highlight_bridge.dart';
 import 'package:quran_kareem/features/reader/presentation/widgets/reader_ayah_note_sheet.dart';
 import 'package:quran_kareem/features/reader/presentation/widgets/reader_ayah_share_card_sheet.dart';
 import 'package:quran_kareem/features/reader/presentation/widgets/reader_ayah_translation_sheet.dart';
@@ -688,7 +689,8 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen>
         onTranslations: () =>
             unawaited(_openAyahTranslationSheet(dialogContext, ayah)),
         onInsights: () => unawaited(_openAyahInsights(dialogContext, ayah)),
-        onMuallimStart: () => unawaited(_startMuallimFromAyah(dialogContext, ayah)),
+        onMuallimStart: () =>
+            unawaited(_startMuallimFromAyah(dialogContext, ayah)),
       ),
     );
   }
@@ -756,7 +758,8 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen>
     MuallimSnapshot snapshot, {
     required bool isDarkMode,
   }) async {
-    final reciters = ref.read(muallimAyahAudioServiceProvider).availableReciters;
+    final reciters =
+        ref.read(muallimAyahAudioServiceProvider).availableReciters;
     if (reciters.isEmpty) {
       return;
     }
@@ -776,9 +779,9 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen>
     await ref.read(muallimStateProvider.notifier).selectReciter(
           reciterId,
           context: context,
-          restartPlayback: snapshot.playbackState ==
-                  MuallimPlaybackState.playing ||
-              snapshot.playbackState == MuallimPlaybackState.paused,
+          restartPlayback:
+              snapshot.playbackState == MuallimPlaybackState.playing ||
+                  snapshot.playbackState == MuallimPlaybackState.paused,
           isDarkMode: isDarkMode,
         );
   }
@@ -977,44 +980,46 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen>
 
     final canPop = context.canPop();
 
-    return PopScope(
-        canPop: canPop,
-        onPopInvokedWithResult: (didPop, result) {
-          if (didPop) return;
-          context.go('/library');
-        },
-        child: Scaffold(
-          key: _scaffoldKey,
-          backgroundColor: bgColor,
-          endDrawer: SurahDrawer(
-            palette: palette,
-            onSurahSelected: (surah) async {
-              await _navigateToTarget(
-                ReaderNavigationTarget(
-                  surahNumber: surah.number,
-                  ayahNumber: 1,
-                  pageNumber: surah.page,
-                ),
-              );
-            },
-          ),
-          appBar: isFullscreenReader
-              ? null
-              : _buildAppBar(
-                  mode,
-                  palette,
-                  nightPresentation,
-                  muallimSnapshot,
-                ),
-          body: _buildReaderSurface(
-            child: readerBody,
-            contentPadding: contentPadding,
-            isFullscreenReader: isFullscreenReader,
-            palette: palette,
-            navigationTarget: navigationTarget,
-            muallimSnapshot: muallimSnapshot,
-          ),
-        ));
+    return MuallimWordHighlightBridge(
+      child: PopScope(
+          canPop: canPop,
+          onPopInvokedWithResult: (didPop, result) {
+            if (didPop) return;
+            context.go('/library');
+          },
+          child: Scaffold(
+            key: _scaffoldKey,
+            backgroundColor: bgColor,
+            endDrawer: SurahDrawer(
+              palette: palette,
+              onSurahSelected: (surah) async {
+                await _navigateToTarget(
+                  ReaderNavigationTarget(
+                    surahNumber: surah.number,
+                    ayahNumber: 1,
+                    pageNumber: surah.page,
+                  ),
+                );
+              },
+            ),
+            appBar: isFullscreenReader
+                ? null
+                : _buildAppBar(
+                    mode,
+                    palette,
+                    nightPresentation,
+                    muallimSnapshot,
+                  ),
+            body: _buildReaderSurface(
+              child: readerBody,
+              contentPadding: contentPadding,
+              isFullscreenReader: isFullscreenReader,
+              palette: palette,
+              navigationTarget: navigationTarget,
+              muallimSnapshot: muallimSnapshot,
+            ),
+          )),
+    );
   }
 
   PreferredSizeWidget _buildAppBar(
@@ -1036,43 +1041,6 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen>
       ),
       actions: [
         IconButton(
-          icon: Icon(
-            nightPresentation == ReaderNightPresentation.normal
-                ? Icons.nights_stay_outlined
-                : Icons.nights_stay_rounded,
-            color: nightPresentation == ReaderNightPresentation.normal
-                ? palette.textColor
-                : AppColors.gold,
-          ),
-          tooltip: context.l10n.readerNightModeSheetTitle,
-          onPressed: () => unawaited(
-            _showNightReaderModeSheet(nightPresentation),
-          ),
-        ),
-        IconButton(
-          icon: Icon(
-            Icons.record_voice_over_rounded,
-            color: muallimSnapshot.isEnabled ? AppColors.gold : palette.textColor,
-          ),
-          tooltip: muallimSnapshot.isEnabled
-              ? context.l10n.mushafMuallimDisable
-              : context.l10n.mushafMuallimEnable,
-          onPressed: () => unawaited(_toggleMuallimMode()),
-        ),
-        IconButton(
-          icon: const Icon(Icons.fullscreen_rounded),
-          tooltip: context.l10n.enterFullscreen,
-          onPressed: _enterFullscreenReader,
-        ),
-        if (ReaderQuickTogglePolicy.isAvailable(mode))
-          IconButton(
-            icon: Icon(mode == ReaderMode.page ? Icons.swap_vert : Icons.swipe),
-            tooltip: mode == ReaderMode.page
-                ? context.l10n.readerToggleToScroll
-                : context.l10n.readerToggleToPage,
-            onPressed: () => _toggleReaderMode(mode),
-          ),
-        IconButton(
           icon: const Icon(Icons.saved_search_rounded),
           tooltip: context.l10n.readerQuickJump,
           onPressed: () async {
@@ -1084,6 +1052,82 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen>
               await _navigateToTarget(target);
             }
           },
+        ),
+        PopupMenuButton<String>(
+          icon: Icon(Icons.more_vert, color: palette.textColor),
+          onSelected: (value) {
+            switch (value) {
+              case 'night':
+                unawaited(
+                  _showNightReaderModeSheet(nightPresentation),
+                );
+              case 'muallim':
+                unawaited(_toggleMuallimMode());
+              case 'fullscreen':
+                _enterFullscreenReader();
+              case 'toggle_mode':
+                _toggleReaderMode(mode);
+            }
+          },
+          itemBuilder: (context) => [
+            PopupMenuItem<String>(
+              value: 'night',
+              child: ListTile(
+                leading: Icon(
+                  nightPresentation == ReaderNightPresentation.normal
+                      ? Icons.nights_stay_outlined
+                      : Icons.nights_stay_rounded,
+                  color: nightPresentation == ReaderNightPresentation.normal
+                      ? null
+                      : AppColors.gold,
+                ),
+                title: Text(context.l10n.readerNightModeSheetTitle),
+                dense: true,
+                contentPadding: EdgeInsets.zero,
+              ),
+            ),
+            PopupMenuItem<String>(
+              value: 'muallim',
+              child: ListTile(
+                leading: Icon(
+                  Icons.record_voice_over_rounded,
+                  color: muallimSnapshot.isEnabled ? AppColors.gold : null,
+                ),
+                title: Text(
+                  muallimSnapshot.isEnabled
+                      ? context.l10n.mushafMuallimDisable
+                      : context.l10n.mushafMuallimEnable,
+                ),
+                dense: true,
+                contentPadding: EdgeInsets.zero,
+              ),
+            ),
+            PopupMenuItem<String>(
+              value: 'fullscreen',
+              child: ListTile(
+                leading: const Icon(Icons.fullscreen_rounded),
+                title: Text(context.l10n.enterFullscreen),
+                dense: true,
+                contentPadding: EdgeInsets.zero,
+              ),
+            ),
+            if (ReaderQuickTogglePolicy.isAvailable(mode))
+              PopupMenuItem<String>(
+                value: 'toggle_mode',
+                child: ListTile(
+                  leading: Icon(
+                    mode == ReaderMode.page ? Icons.swap_vert : Icons.swipe,
+                  ),
+                  title: Text(
+                    mode == ReaderMode.page
+                        ? context.l10n.readerToggleToScroll
+                        : context.l10n.readerToggleToPage,
+                  ),
+                  dense: true,
+                  contentPadding: EdgeInsets.zero,
+                ),
+              ),
+          ],
         ),
         Builder(
           builder: (context) => IconButton(
@@ -1153,6 +1197,13 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen>
                     muallimSnapshot,
                     isDarkMode: palette.useDarkReaderLibrary,
                   ),
+                ),
+                onRetry: () => unawaited(
+                  ref.read(muallimStateProvider.notifier).togglePlayback(
+                        navigationTarget,
+                        context: context,
+                        isDarkMode: palette.useDarkReaderLibrary,
+                      ),
                 ),
               ),
             ),
@@ -1244,6 +1295,7 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen>
       downloadFontsDialogStyle: _getFontsDialogStyle(palette),
       onAyahLongPress: _showVerseActionMenu,
       isShowTabBar: false,
+      isShowAudioSlider: false,
     );
   }
 

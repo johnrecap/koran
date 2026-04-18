@@ -83,6 +83,7 @@ class TranslatedAyahTile extends StatelessWidget {
                   ayah.text,
                   textDirection: TextDirection.rtl,
                   textAlign: TextAlign.right,
+                  softWrap: true,
                   style: TextStyle(
                     fontFamily: 'ScheherazadeNew',
                     fontSize: arabicFontSize,
@@ -94,6 +95,7 @@ class TranslatedAyahTile extends StatelessWidget {
                 Text(
                   translationText,
                   textDirection: TextDirection.ltr,
+                  softWrap: true,
                   style: TextStyle(
                     fontSize: 15,
                     height: 1.7,

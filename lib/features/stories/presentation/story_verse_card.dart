@@ -72,9 +72,10 @@ class StoryVerseCard extends ConsumerWidget {
                   Text(
                     verse.textAr,
                     textAlign: TextAlign.center,
+                    softWrap: true,
                     style: TextStyle(
                       fontFamily: 'Amiri',
-                      fontSize: 25,
+                      fontSize: 23,
                       height: 1.8,
                       color: isDark ? AppColors.textDark : AppColors.textLight,
                     ),

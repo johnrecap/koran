@@ -60,9 +60,14 @@ class PackageMuallimAyahAudioService implements MuallimAyahAudioService {
     BuildContext? context,
     bool isDarkMode = false,
   }) async {
-    await ensureInitialized();
-    if (context == null) {
+    final playbackContext = context;
+    if (playbackContext == null) {
       throw StateError('Muallim playback requires a BuildContext.');
+    }
+
+    await ensureInitialized();
+    if (!playbackContext.mounted) {
+      return;
     }
 
     _hasActiveSession = true;
@@ -70,7 +75,7 @@ class PackageMuallimAyahAudioService implements MuallimAyahAudioService {
     _audioCtrl.disableSurahAutoNextListener();
     _audioCtrl.disableSurahPositionSaving();
     await _audioCtrl.playAyah(
-      context,
+      playbackContext,
       ayah.ayahUQNumber,
       playSingleAyah: false,
       isDarkMode: isDarkMode,
@@ -92,6 +97,9 @@ class PackageMuallimAyahAudioService implements MuallimAyahAudioService {
     bool isDarkMode = false,
   }) async {
     await ensureInitialized();
+    if (context != null && !context.mounted) {
+      return;
+    }
 
     final player = _audioCtrl.state.audioPlayer;
     if (player.audioSource == null ||
@@ -129,13 +137,18 @@ class PackageMuallimAyahAudioService implements MuallimAyahAudioService {
   Future<void> nextAyah({
     BuildContext? context,
   }) async {
-    await ensureInitialized();
-    if (context == null) {
+    final playbackContext = context;
+    if (playbackContext == null) {
       throw StateError('Muallim next-ayah requires a BuildContext.');
+    }
+
+    await ensureInitialized();
+    if (!playbackContext.mounted) {
+      return;
     }
     _hasActiveSession = true;
     await _audioCtrl.skipNextAyah(
-      context,
+      playbackContext,
       _audioCtrl.state.currentAyahUniqueNumber.value,
     );
     _emitSnapshot();
@@ -145,13 +158,18 @@ class PackageMuallimAyahAudioService implements MuallimAyahAudioService {
   Future<void> previousAyah({
     BuildContext? context,
   }) async {
-    await ensureInitialized();
-    if (context == null) {
+    final playbackContext = context;
+    if (playbackContext == null) {
       throw StateError('Muallim previous-ayah requires a BuildContext.');
+    }
+
+    await ensureInitialized();
+    if (!playbackContext.mounted) {
+      return;
     }
     _hasActiveSession = true;
     await _audioCtrl.skipPreviousAyah(
-      context,
+      playbackContext,
       _audioCtrl.state.currentAyahUniqueNumber.value,
     );
     _emitSnapshot();
@@ -165,6 +183,9 @@ class PackageMuallimAyahAudioService implements MuallimAyahAudioService {
     bool isDarkMode = false,
   }) async {
     await ensureInitialized();
+    if (context != null && !context.mounted) {
+      return;
+    }
 
     final option = availableReciters.cast<AudioHubReciterOption?>().firstWhere(
           (item) => item?.id == reciterId,

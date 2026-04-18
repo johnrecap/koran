@@ -55,8 +55,10 @@ class QuranTextView extends StatelessWidget {
   }
 }
 
-/// Individual ayah widget — lightweight, only rebuilds when its own data changes.
-class _AyahWidget extends StatelessWidget {
+/// Individual ayah widget — manages gesture recognizer lifecycle properly.
+/// Converted to StatefulWidget to create recognizers once and dispose them,
+/// preventing native resource leaks on long surahs.
+class _AyahWidget extends StatefulWidget {
   final Ayah ayah;
   final double fontSize;
   final Color textColor;
@@ -75,42 +77,85 @@ class _AyahWidget extends StatelessWidget {
   });
 
   @override
+  State<_AyahWidget> createState() => _AyahWidgetState();
+}
+
+class _AyahWidgetState extends State<_AyahWidget> {
+  LongPressGestureRecognizer? _longPressRecognizer;
+  TapGestureRecognizer? _tapRecognizer;
+
+  @override
+  void initState() {
+    super.initState();
+    _syncRecognizers();
+  }
+
+  @override
+  void didUpdateWidget(covariant _AyahWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.onLongPress != widget.onLongPress ||
+        oldWidget.onNumberTap != widget.onNumberTap ||
+        oldWidget.ayah != widget.ayah) {
+      _disposeRecognizers();
+      _syncRecognizers();
+    }
+  }
+
+  void _syncRecognizers() {
+    if (widget.onLongPress != null) {
+      _longPressRecognizer = LongPressGestureRecognizer()
+        ..onLongPress = () => widget.onLongPress!(widget.ayah);
+    }
+    if (widget.onNumberTap != null) {
+      _tapRecognizer = TapGestureRecognizer()
+        ..onTap = () => widget.onNumberTap!(widget.ayah);
+    }
+  }
+
+  void _disposeRecognizers() {
+    _longPressRecognizer?.dispose();
+    _longPressRecognizer = null;
+    _tapRecognizer?.dispose();
+    _tapRecognizer = null;
+  }
+
+  @override
+  void dispose() {
+    _disposeRecognizers();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Text.rich(
       TextSpan(
         children: [
           // Verse text
           TextSpan(
-            text: ayah.text,
+            text: widget.ayah.text,
             style: TextStyle(
               fontFamily: 'ScheherazadeNew',
-              fontSize: fontSize,
-              color: textColor,
+              fontSize: widget.fontSize,
+              color: widget.textColor,
               height: 2.0,
               letterSpacing: 0,
               wordSpacing: 2,
             ),
-            recognizer: onLongPress != null
-                ? (LongPressGestureRecognizer()
-                  ..onLongPress = () => onLongPress!(ayah))
-                : null,
+            recognizer: _longPressRecognizer,
           ),
           // Verse number marker
           TextSpan(
             text:
-                ' \uFD3F${VerseMarker.toArabicNumerals(ayah.ayahNumber)}\uFD3E ',
+                ' \uFD3F${VerseMarker.toArabicNumerals(widget.ayah.ayahNumber)}\uFD3E ',
             style: TextStyle(
               fontFamily: 'Amiri',
-              fontSize: fontSize * 0.7,
-              color: bookmarked ? Colors.white : AppColors.gold,
+              fontSize: widget.fontSize * 0.7,
+              color: widget.bookmarked ? Colors.white : AppColors.gold,
               fontWeight: FontWeight.bold,
               backgroundColor:
-                  bookmarked ? AppColors.gold : Colors.transparent,
+                  widget.bookmarked ? AppColors.gold : Colors.transparent,
             ),
-            recognizer: onNumberTap != null
-                ? (TapGestureRecognizer()
-                  ..onTap = () => onNumberTap!(ayah))
-                : null,
+            recognizer: _tapRecognizer,
           ),
         ],
       ),
